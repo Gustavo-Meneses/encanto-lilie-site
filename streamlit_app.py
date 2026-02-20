@@ -1,6 +1,6 @@
 import streamlit as st
 
-# 1. Configuração da Página
+# 1. CONFIGURAÇÃO DA PÁGINA (Precisa ser a primeira linha)
 st.set_page_config(
     page_title="Encanto Liliê - Catálogo",
     page_icon="✨",
@@ -8,164 +8,151 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# 2. Injeção de CSS e Ícones (Tudo em um único bloco para evitar erros)
-st.markdown("""
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css">
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700;800&display=swap');
-    
-    /* Reset e Cores de Fundo */
-    .main {
-        background-color: #FCFAFF;
-    }
+# 2. INJEÇÃO DE ESTILO (Ajustado para não vazar texto no topo)
+def aplicar_estilo():
+    st.markdown("""
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css">
+        <style>
+            /* Esconde elementos nativos desnecessários */
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
 
-    /* Fontes e Textos - Ajustados para alta visibilidade */
-    html, body, [class*="css"], p, span {
-        font-family: 'Nunito', sans-serif !important;
-        color: #1A0B2E !important; /* Roxo Quase Preto para leitura perfeita */
-    }
+            /* Fontes e Cores Base */
+            @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700;800&display=swap');
+            
+            .stApp {
+                background-color: #FCFAFF;
+            }
 
-    h1, h2, h3 {
-        font-family: 'Fredoka', sans-serif !important;
-        color: #4C1D95 !important; /* Roxo Profundo */
-        font-weight: 600;
-    }
+            /* Texto com Contraste Máximo */
+            h1, h2, h3, h4, p, span, div {
+                font-family: 'Nunito', sans-serif !important;
+                color: #1A0B2E !important; /* Roxo Noite para leitura clara */
+            }
 
-    /* Banner Principal */
-    .hero-container {
-        background: linear-gradient(135deg, #6D28D9 0%, #BE185D 100%);
-        padding: 50px 20px;
-        border-radius: 25px;
-        color: #FFFFFF !important;
-        text-align: center;
-        margin-bottom: 35px;
-        box-shadow: 0 8px 25px rgba(109, 40, 217, 0.2);
-    }
+            .hero-title {
+                font-family: 'Fredoka', sans-serif !important;
+                font-size: 2.5rem !important;
+                font-weight: 600 !important;
+                color: #FFFFFF !important;
+                margin-bottom: 0px;
+            }
 
-    /* Cards de Produtos */
-    .st-emotion-cache-1r6slb0, .product-card {
-        background-color: #FFFFFF;
-        padding: 20px;
-        border-radius: 20px;
-        border: 2px solid #F3E8FF; /* Borda mais nítida */
-        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        text-align: center;
-    }
+            /* Banner */
+            .hero-container {
+                background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+                padding: 40px 20px;
+                border-radius: 20px;
+                text-align: center;
+                margin-bottom: 30px;
+                box-shadow: 0 10px 20px rgba(124, 58, 237, 0.15);
+            }
 
-    .product-title {
-        font-size: 1.3rem;
-        font-weight: 800;
-        color: #4C1D95;
-        margin-top: 15px;
-    }
+            /* Cards de Produto */
+            .product-card {
+                background-color: #FFFFFF;
+                padding: 15px;
+                border-radius: 18px;
+                border: 1px solid #E9D5FF;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+                text-align: center;
+                margin-bottom: 10px;
+            }
 
-    .product-desc {
-        font-size: 1rem;
-        color: #374151 !important; /* Cinza Escuro (Grafite) */
-        line-height: 1.5;
-        margin-bottom: 20px;
-    }
+            .product-title {
+                font-weight: 800;
+                color: #4C1D95 !important;
+                font-size: 1.1rem;
+                margin-top: 10px;
+            }
 
-    /* Botão Rosa Encanto */
-    div.stButton > button:first-child {
-        background-color: #EC4899 !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 15px !important;
-        padding: 15px 25px !important;
-        font-weight: 700 !important;
-        width: 100% !important;
-        transition: 0.3s ease !important;
-    }
-    
-    div.stButton > button:first-child:hover {
-        background-color: #BE185D !important;
-        box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4) !important;
-        transform: scale(1.02);
-    }
+            .product-desc {
+                font-size: 0.9rem;
+                color: #374151 !important; /* Cinza escuro/grafite */
+                line-height: 1.3;
+            }
 
-    /* Rodapé Delicado */
-    .footer {
-        background-color: #F5F3FF;
-        padding: 40px 20px;
-        border-radius: 30px 30px 0 0;
-        text-align: center;
-        margin-top: 60px;
-        border-top: 2px solid #EDE9FE;
-    }
+            /* Botão Customizado */
+            div.stButton > button {
+                background-color: #EC4899 !important;
+                color: white !important;
+                border: none !important;
+                border-radius: 12px !important;
+                padding: 10px 20px !important;
+                font-weight: 700 !important;
+                width: 100%;
+                transition: 0.3s;
+            }
+            div.stButton > button:hover {
+                background-color: #BE185D !important;
+                transform: scale(1.02);
+            }
 
-    .footer i {
-        font-size: 28px;
-        color: #7C3AED;
-        display: block;
-        margin-bottom: 5px;
-    }
-    </style>
+            /* Rodapé */
+            .footer-box {
+                background-color: #F5F3FF;
+                padding: 30px;
+                border-radius: 20px;
+                text-align: center;
+                margin-top: 40px;
+            }
+        </style>
     """, unsafe_allow_html=True)
 
-# --- INÍCIO DO CONTEÚDO VISÍVEL ---
+aplicar_estilo()
 
-# Banner Hero
+# --- CONTEÚDO DA PÁGINA ---
+
+# Banner Principal
 st.markdown("""
     <div class="hero-container">
-        <h1 style="color: white; margin-bottom: 10px;">Encanto Liliê ✨</h1>
-        <p style="color: #FDF2F8; font-size: 1.2rem; font-weight: 600;">Criatividade que encanta, resultados que marcam</p>
+        <h1 class="hero-title">Encanto Liliê ✨</h1>
+        <p style="color: #FDF2F8 !important; font-weight: 600; opacity: 0.9;">Criatividade que encanta, resultados que marcam</p>
     </div>
     """, unsafe_allow_html=True)
 
-# Categorias
-st.subheader("Categorias")
-c1, c2, c3 = st.columns(3)
-with c1: st.button("🎄 Natal 2025", key="cat1")
-with c2: st.button("📚 Kits Escolares", key="cat2")
-with c3: st.button("☕ Canecas", key="cat3")
+# Categorias Rápidas
+st.markdown("### <i class='ph-duotone ph-circles-four'></i> Categorias", unsafe_allow_html=True)
+cat_cols = st.columns(3)
+with cat_cols[0]: st.button("🎄 Natal")
+with cat_cols[1]: st.button("📚 Escolar")
+with cat_cols[2]: st.button("☕ Canecas")
 
-st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("---")
 
-# Vitrine de Produtos
-st.markdown("### Destaques do Catálogo")
+# Vitrine de Produtos (Inspirada no Instagram)
+st.markdown("### <i class='ph-duotone ph-star'></i> Mais Vendidos", unsafe_allow_html=True)
 
-# Lista de Produtos (Exemplo)
+# Simulando fotos do catálogo com ícones delicados
 produtos = [
-    {"nome": "Kit Marmitinha", "desc": "Personalizada com nome e idade. Ideal para festas infantis.", "cor": "#A78BFA"},
-    {"nome": "Kit Escolar Hulk", "desc": "Etiquetas e toalhinha para volta às aulas resistentes à água.", "cor": "#34D399"},
-    {"nome": "Caneca Pet", "desc": "Sua foto favorita estampada em porcelana de alta qualidade.", "cor": "#F472B6"}
+    {"nome": "Kit Marmitinha", "desc": "Personalizada com o tema da sua festa.", "cor": "#DDD6FE", "ícone": "ph-package"},
+    {"nome": "Kit Escolar Hulk", "desc": "Toalhinha e etiquetas resistentes.", "cor": "#D1FAE5", "ícone": "ph-backpack"},
+    {"nome": "Caneca Pet", "desc": "Sua foto favorita em uma caneca linda.", "cor": "#FCE7F3", "ícone": "ph-coffee"}
 ]
 
-cols = st.columns(3)
-
-for i, p in enumerate(produtos):
-    with cols[i]:
-        # Card Visual
+prod_cols = st.columns(3)
+for idx, p in enumerate(produtos):
+    with prod_cols[idx]:
         st.markdown(f"""
             <div class="product-card">
-                <div style="background:{p['cor']}; height:180px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; font-size:50px;">
-                    <i class="ph-duotone ph-gift"></i>
+                <div style="background:{p['cor']}; height:150px; border-radius:12px; display:flex; align-items:center; justify-content:center;">
+                    <i class="{p['ícone']}" style="font-size: 50px; color: #6D28D9;"></i>
                 </div>
                 <div class="product-title">{p['nome']}</div>
                 <div class="product-desc">{p['desc']}</div>
             </div>
         """, unsafe_allow_html=True)
-        # Botão de Ação
-        st.button(f"Pedir no WhatsApp", key=f"btn_{i}")
+        st.button(f"Pedir no WhatsApp", key=f"p_{idx}")
 
-# Rodapé
+# Rodapé Delicado
 st.markdown("""
-    <div class="footer">
-        <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
-            <div>
-                <i class="ph-duotone ph-truck"></i>
-                <b style="color:#5B21B6">Envio Nacional</b>
-            </div>
-            <div>
-                <i class="ph-duotone ph-instagram-logo"></i>
-                <b style="color:#5B21B6">@encantolilie_</b>
-            </div>
-            <div>
-                <i class="ph-duotone ph-whatsapp-logo"></i>
-                <b style="color:#5B21B6">Osasco, SP</b>
-            </div>
+    <div class="footer-box">
+        <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 15px;">
+            <span><i class="ph-duotone ph-truck" style="font-size:24px; color:#7C3AED;"></i><br><b>Envios</b></span>
+            <span><i class="ph-duotone ph-instagram-logo" style="font-size:24px; color:#7C3AED;"></i><br><b>Instagram</b></span>
+            <span><i class="ph-duotone ph-map-pin" style="font-size:24px; color:#7C3AED;"></i><br><b>Osasco</b></span>
         </div>
-        <p style="margin-top:40px; font-size:0.9rem; color:#6B7280;">© 2026 Encanto Liliê | Feito com carinho para você.</p>
+        <p style="font-size: 0.8rem; opacity: 0.7;">© 2026 Encanto Liliê - Papelaria e Personalizados</p>
     </div>
     """, unsafe_allow_html=True)
