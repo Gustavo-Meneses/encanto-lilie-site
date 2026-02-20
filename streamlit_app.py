@@ -7,56 +7,55 @@ st.set_page_config(
     layout="wide",
 )
 
-# 2. Injeção de CSS (Visual Clean & Mobile-First)
+# 2. Injeção de CSS (Foco total na correção dos botões e contraste)
 st.markdown("""
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
         
-        /* Reset de Interface */
+        /* Reset Geral */
         .stApp { background-color: #FFFFFF; }
-        [data-testid="stHeader"], [data-testid="stFooter"] { visibility: hidden; }
+        [data-testid="stHeader"] { visibility: hidden; }
         .block-container { padding-top: 2rem !important; }
 
-        /* Tipografia de Alto Contraste */
+        /* Tipografia de Alto Contraste para nomes e textos */
         html, body, [class*="css"], p, span {
             font-family: 'Outfit', sans-serif !important;
-            color: #0F172A !important; /* Texto Escuro para Leitura */
+            color: #1A1A1A !important; 
         }
 
-        /* Banner Minimalista */
+        /* Banner Hero */
         .hero-section {
-            background: linear-gradient(135deg, #8B5CF6 0%, #D946EF 100%);
+            background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
             padding: 40px 20px;
             border-radius: 24px;
             text-align: center;
             margin-bottom: 30px;
             color: white !important;
         }
-        .hero-section h1 { color: white !important; font-weight: 800; margin-bottom: 5px; }
-        .hero-section p { color: #F5F3FF !important; font-weight: 400; opacity: 0.9; }
+        .hero-section h1 { color: white !important; font-weight: 800; }
+        .hero-section p { color: #FFFFFF !important; font-weight: 400; opacity: 0.9; }
 
         /* Chips de Categoria */
         .chip {
             display: inline-block;
-            padding: 6px 14px;
-            background: #F8FAFC;
-            border: 1px solid #E2E8F0;
+            padding: 8px 16px;
+            background: #F3E8FF;
             border-radius: 100px;
             margin: 4px;
             font-size: 0.85rem;
-            font-weight: 600;
-            color: #64748B;
+            font-weight: 700;
+            color: #7C3AED !important;
         }
 
-        /* Cards de Produto Estilo 'Boutique' */
+        /* Cards de Produto */
         .product-card {
             background: #FFFFFF;
             border-radius: 20px;
             border: 1px solid #F1F5F9;
             padding: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            text-align: center;
         }
         .img-box {
             background: #F8FAFC;
@@ -65,38 +64,50 @@ st.markdown("""
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }
 
-        /* Botão de Ação */
+        /* --- CORREÇÃO DOS BOTÕES (VISIBILIDADE TOTAL) --- */
         div.stButton > button {
-            background-color: #0F172A !important;
-            color: white !important;
+            background-color: #7C3AED !important; /* Roxo vibrante */
+            color: #FFFFFF !important;           /* Texto Branco */
             border-radius: 12px !important;
             border: none !important;
             width: 100% !important;
-            height: 45px !important;
-            font-weight: 600 !important;
-            transition: 0.2s;
-        }
-        div.stButton > button:hover {
-            background-color: #334155 !important;
-            transform: translateY(-2px);
+            height: 50px !important;
+            font-size: 1rem !important;
+            font-weight: 800 !important;        /* Texto bem grosso */
+            box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3) !important;
+            transition: 0.3s ease !important;
+            margin-top: 5px;
         }
 
-        /* Rodapé Mobile */
-        .footer-clean {
-            text-align: center;
-            padding: 40px 10px;
-            margin-top: 30px;
-            border-top: 1px solid #F1F5F9;
+        div.stButton > button:hover {
+            background-color: #EC4899 !important; /* Muda para Rosa no hover */
+            transform: scale(1.02);
+        }
+
+        /* Ajuste para o texto do produto não ficar apagado */
+        .product-title {
+            color: #1A1A1A !important;
+            font-weight: 800 !important;
+            font-size: 1.1rem !important;
+            margin: 10px 0 !important;
+            display: block;
+        }
+
+        .product-tag {
+            color: #7C3AED !important;
+            font-weight: 700 !important;
+            text-transform: uppercase;
+            font-size: 0.75rem;
         }
     </style>
 """, unsafe_allow_html=True)
 
-# --- CONTEÚDO ---
+# --- CONTEÚDO DA PÁGINA ---
 
-# 1. Header Hero [Inspirado na Bio do Instagram]
+# Banner
 st.markdown("""
     <div class="hero-section">
         <h1>Encanto Liliê</h1>
@@ -104,50 +115,49 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# 2. Categorias (Filtros Limpos)
+# Categorias
 st.write("### Categorias")
 st.markdown("""
     <div>
-        <span class="chip">🎄 Natal</span>
-        <span class="chip">📚 Escolar</span>
+        <span class="chip">🎄 Natal 2025</span>
+        <span class="chip">📚 Kits Escolares</span>
         <span class="chip">☕ Canecas</span>
         <span class="chip">🎂 Aniversário</span>
     </div>
     <br>
 """, unsafe_allow_html=True)
 
-# 3. Vitrine (Grid Simples para não quebrar no mobile)
-st.write("### Destaques")
+# Destaques
+st.write("### Destaques do Catálogo")
 
-# Dados dos produtos
+# Dados atualizados conforme as fotos do Instagram enviadas
 produtos = [
     {"n": "Kit Marmitinha", "t": "Aniversário", "icon": "🎁"},
     {"n": "Kit Escolar Heróis", "t": "Escolar", "icon": "🎨"},
     {"n": "Caneca Personalizada", "t": "Canecas", "icon": "☕"}
 ]
 
-# Usando colunas simples (Streamlit cuida do mobile automaticamente)
-col1, col2, col3 = st.columns([1, 1, 1])
+col1, col2, col3 = st.columns(3)
 
 for idx, p in enumerate(produtos):
-    target = [col1, col2, col3][idx % 3]
-    with target:
+    with [col1, col2, col3][idx]:
         st.markdown(f"""
             <div class="product-card">
                 <div class="img-box">
-                    <span style="font-size: 50px;">{p['icon']}</span>
+                    <span style="font-size: 55px;">{p['icon']}</span>
                 </div>
-                <div style="font-size: 0.75rem; color: #8B5CF6; font-weight: 700; text-transform: uppercase;">{p['t']}</div>
-                <div style="font-weight: 800; font-size: 1.1rem; margin-bottom: 10px;">{p['n']}</div>
+                <div class="product-tag">{p['t']}</div>
+                <div class="product-title">{p['n']}</div>
             </div>
         """, unsafe_allow_html=True)
-        st.button("Pedir agora", key=f"p_{idx}")
+        # O botão agora terá o texto "Ver Detalhes" ou "Pedir no Whats" bem visível
+        st.button(f"Pedir no WhatsApp", key=f"btn_{idx}")
 
-# 4. Rodapé Limpo
+# Rodapé
+st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("""
-    <div class="footer-clean">
-        <p style="font-size: 0.9rem; font-weight: 600;">📍 Osasco, São Paulo</p>
-        <p style="font-size: 0.8rem; color: #64748B;">@encantolilie_</p>
-        <p style="font-size: 0.7rem; color: #94A3B8; margin-top: 20px;">© 2026 Encanto Liliê</p>
+    <div style='text-align: center; border-top: 1px solid #EEE; padding-top: 20px;'>
+        <p style='font-weight: 600; color: #7C3AED;'>📍 Osasco, São Paulo</p>
+        <p style='font-size: 0.8rem; color: #666;'>© 2026 Encanto Liliê | @encantolilie_</p>
     </div>
 """, unsafe_allow_html=True)
