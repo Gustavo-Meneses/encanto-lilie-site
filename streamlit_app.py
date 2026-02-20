@@ -1,158 +1,173 @@
 import streamlit as st
 
-# 1. CONFIGURAÇÃO DA PÁGINA (Precisa ser a primeira linha)
+# 1. Configuração Inicial (Sempre a primeira linha)
 st.set_page_config(
-    page_title="Encanto Liliê - Catálogo",
+    page_title="Encanto Liliê",
     page_icon="✨",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
-# 2. INJEÇÃO DE ESTILO (Ajustado para não vazar texto no topo)
-def aplicar_estilo():
-    st.markdown("""
-        <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css">
-        <style>
-            /* Esconde elementos nativos desnecessários */
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            header {visibility: hidden;}
-
-            /* Fontes e Cores Base */
-            @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700;800&display=swap');
-            
-            .stApp {
-                background-color: #FCFAFF;
-            }
-
-            /* Texto com Contraste Máximo */
-            h1, h2, h3, h4, p, span, div {
-                font-family: 'Nunito', sans-serif !important;
-                color: #1A0B2E !important; /* Roxo Noite para leitura clara */
-            }
-
-            .hero-title {
-                font-family: 'Fredoka', sans-serif !important;
-                font-size: 2.5rem !important;
-                font-weight: 600 !important;
-                color: #FFFFFF !important;
-                margin-bottom: 0px;
-            }
-
-            /* Banner */
-            .hero-container {
-                background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
-                padding: 40px 20px;
-                border-radius: 20px;
-                text-align: center;
-                margin-bottom: 30px;
-                box-shadow: 0 10px 20px rgba(124, 58, 237, 0.15);
-            }
-
-            /* Cards de Produto */
-            .product-card {
-                background-color: #FFFFFF;
-                padding: 15px;
-                border-radius: 18px;
-                border: 1px solid #E9D5FF;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-                text-align: center;
-                margin-bottom: 10px;
-            }
-
-            .product-title {
-                font-weight: 800;
-                color: #4C1D95 !important;
-                font-size: 1.1rem;
-                margin-top: 10px;
-            }
-
-            .product-desc {
-                font-size: 0.9rem;
-                color: #374151 !important; /* Cinza escuro/grafite */
-                line-height: 1.3;
-            }
-
-            /* Botão Customizado */
-            div.stButton > button {
-                background-color: #EC4899 !important;
-                color: white !important;
-                border: none !important;
-                border-radius: 12px !important;
-                padding: 10px 20px !important;
-                font-weight: 700 !important;
-                width: 100%;
-                transition: 0.3s;
-            }
-            div.stButton > button:hover {
-                background-color: #BE185D !important;
-                transform: scale(1.02);
-            }
-
-            /* Rodapé */
-            .footer-box {
-                background-color: #F5F3FF;
-                padding: 30px;
-                border-radius: 20px;
-                text-align: center;
-                margin-top: 40px;
-            }
-        </style>
-    """, unsafe_allow_html=True)
-
-aplicar_estilo()
-
-# --- CONTEÚDO DA PÁGINA ---
-
-# Banner Principal
+# 2. Injeção de CSS Robusta (Para não vazar texto e otimizar Mobile)
 st.markdown("""
-    <div class="hero-container">
-        <h1 class="hero-title">Encanto Liliê ✨</h1>
-        <p style="color: #FDF2F8 !important; font-weight: 600; opacity: 0.9;">Criatividade que encanta, resultados que marcam</p>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <style>
+        /* Esconder elementos nativos do Streamlit */
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+        .block-container {padding-top: 2rem; padding-bottom: 2rem;}
+
+        /* Fontes e Background */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        
+        html, body, [class*="css"] {
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            background-color: #FFFFFF !important;
+        }
+
+        /* Texto com alto contraste */
+        h1, h2, h3, p, span {
+            color: #111827 !important; /* Quase preto para leitura perfeita */
+        }
+
+        /* Banner Clean */
+        .hero {
+            background: #7C3AED;
+            padding: 30px 20px;
+            border-radius: 24px;
+            color: white !important;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .hero h1 { color: white !important; font-size: 1.8rem !important; margin-bottom: 5px; }
+        .hero p { color: #DDD6FE !important; font-size: 0.9rem !important; font-weight: 400; }
+
+        /* Categorias Estilo 'Pill' */
+        .category-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background: #F3F4F6;
+            border-radius: 100px;
+            margin: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #4B5563;
+        }
+
+        /* Cards de Produto - Estilo Minimalista */
+        .product-card {
+            background: #FFFFFF;
+            border-radius: 20px;
+            border: 1px solid #F3F4F6;
+            padding: 12px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+        .product-image-placeholder {
+            background: #F9FAFB;
+            height: 160px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7C3AED;
+        }
+        .product-info { padding: 10px 5px; }
+        .product-name { font-weight: 700; font-size: 1rem; color: #111827; }
+        .product-price { color: #EC4899; font-weight: 800; font-size: 1.1rem; }
+
+        /* Botão WhatsApp Estilo App */
+        div.stButton > button {
+            background: #111827 !important;
+            color: #FFFFFF !important;
+            border-radius: 14px !important;
+            border: none !important;
+            height: 48px !important;
+            width: 100% !important;
+            font-weight: 600 !important;
+            font-size: 0.9rem !important;
+            text-transform: none !important;
+        }
+
+        /* Ajustes de Grid para Celular */
+        @media (max-width: 640px) {
+            .hero { padding: 25px 15px; }
+            .hero h1 { font-size: 1.5rem !important; }
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# --- INTERFACE ---
+
+# 1. Header Hero
+st.markdown("""
+    <div class="hero">
+        <h1>Encanto Liliê</h1>
+        <p>Artesanatos feitos com amor e criatividade ✨</p>
     </div>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
-# Categorias Rápidas
-st.markdown("### <i class='ph-duotone ph-circles-four'></i> Categorias", unsafe_allow_html=True)
-cat_cols = st.columns(3)
-with cat_cols[0]: st.button("🎄 Natal")
-with cat_cols[1]: st.button("📚 Escolar")
-with cat_cols[2]: st.button("☕ Canecas")
+# 2. Filtros/Categorias (Chips)
+st.markdown("### <span class='material-symbols-rounded' style='vertical-align: middle; margin-right: 5px;'>grid_view</span> Categorias", unsafe_allow_html=True)
+st.markdown("""
+    <div style='margin-bottom: 20px;'>
+        <span class="category-chip">🎄 Natal</span>
+        <span class="category-chip">📚 Escolar</span>
+        <span class="category-chip">☕ Canecas</span>
+        <span class="category-chip">🎂 Festas</span>
+    </div>
+""", unsafe_allow_html=True)
 
-st.markdown("---")
+# 3. Vitrine de Produtos (Grid Responsivo)
+st.markdown("### <span class='material-symbols-rounded' style='vertical-align: middle; margin-right: 5px;'>auto_awesome</span> Destaques", unsafe_allow_html=True)
 
-# Vitrine de Produtos (Inspirada no Instagram)
-st.markdown("### <i class='ph-duotone ph-star'></i> Mais Vendidos", unsafe_allow_html=True)
-
-# Simulando fotos do catálogo com ícones delicados
+# Lista de itens baseada na imagem enviada
 produtos = [
-    {"nome": "Kit Marmitinha", "desc": "Personalizada com o tema da sua festa.", "cor": "#DDD6FE", "ícone": "ph-package"},
-    {"nome": "Kit Escolar Hulk", "desc": "Toalhinha e etiquetas resistentes.", "cor": "#D1FAE5", "ícone": "ph-backpack"},
-    {"nome": "Caneca Pet", "desc": "Sua foto favorita em uma caneca linda.", "cor": "#FCE7F3", "ícone": "ph-coffee"}
+    {"nome": "Kit Marmitinha Personalizada", "tag": "Aniversário", "icon": "featured_seasonal"},
+    {"nome": "Kit Escolar (Hulk/Heróis)", "tag": "Escolar", "icon": "school"},
+    {"nome": "Caneca Amor em 4 Patas", "tag": "Presentes", "icon": "coffee"}
 ]
 
-prod_cols = st.columns(3)
+# Grid: 1 coluna no celular, 3 no computador
+cols = st.columns([1, 1, 1] if not st.get_option("setup.is_shm_enabled") else 1) # Hack simples para mobile
+col1, col2, col3 = st.columns(3)
+
 for idx, p in enumerate(produtos):
-    with prod_cols[idx]:
+    target_col = [col1, col2, col3][idx % 3]
+    with target_col:
         st.markdown(f"""
             <div class="product-card">
-                <div style="background:{p['cor']}; height:150px; border-radius:12px; display:flex; align-items:center; justify-content:center;">
-                    <i class="{p['ícone']}" style="font-size: 50px; color: #6D28D9;"></i>
+                <div class="product-image-placeholder">
+                    <span class="material-symbols-rounded" style="font-size: 48px;">{p['icon']}</span>
                 </div>
-                <div class="product-title">{p['nome']}</div>
-                <div class="product-desc">{p['desc']}</div>
+                <div class="product-info">
+                    <div style="font-size: 0.75rem; color: #7C3AED; font-weight: 600;">{p['tag']}</div>
+                    <div class="product-name">{p['nome']}</div>
+                </div>
             </div>
         """, unsafe_allow_html=True)
-        st.button(f"Pedir no WhatsApp", key=f"p_{idx}")
+        st.button("Encomendar", key=f"btn_{idx}")
 
-# Rodapé Delicado
+# 4. Rodapé Minimalista
+st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("""
-    <div class="footer-box">
-        <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 15px;">
-            <span><i class="ph-duotone ph-truck" style="font-size:24px; color:#7C3AED;"></i><br><b>Envios</b></span>
-            <span><i class="ph-duotone ph-instagram-logo" style="font-size:24px; color:#7C3AED;"></i><br><b>Instagram</b></span>
-            <span><i class="ph-duotone ph-map-pin" style="font-size:24px; color:#7C3AED;"></i><br><b>Osasco</b></span>
+    <div style='text-align: center; border-top: 1px solid #F3F4F6; padding-top: 30px; margin-bottom: 50px;'>
+        <div style='display: flex; justify-content: center; gap: 25px; color: #6B7280;'>
+            <div style='text-align: center;'>
+                <span class="material-symbols-rounded">local_shipping</span><br>
+                <span style='font-size: 0.7rem; font-weight: 600;'>Envios</span>
+            </div>
+            <div style='text-align: center;'>
+                <span class="material-symbols-rounded">verified_user</span><br>
+                <span style='font-size: 0.7rem; font-weight: 600;'>Seguro</span>
+            </div>
+            <div style='text-align: center;'>
+                <span class="material-symbols-rounded">chat_bubble</span><br>
+                <span style='font-size: 0.7rem; font-weight: 600;'>Suporte</span>
+            </div>
         </div>
-        <p style="font-size: 0.8rem; opacity: 0.7;">© 2026 Encanto Liliê - Papelaria e Personalizados</p>
+        <p style='font-size: 0.75rem; color: #9CA3AF; margin-top: 25px;'>© 2026 Encanto Liliê | Osasco - SP</p>
     </div>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
