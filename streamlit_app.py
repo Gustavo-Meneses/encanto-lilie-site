@@ -1,5 +1,4 @@
 import streamlit as st
-from streamlit_autorefresh import st_autorefresh
 
 # 1. Configuração da Página
 st.set_page_config(
@@ -8,15 +7,11 @@ st.set_page_config(
     layout="wide",
 )
 
-# 2. Autorefresh para garantir o giro (3000ms = 3 segundos)
-# O componente agora vai ouvir esse contador para mudar de slide
-count = st_autorefresh(interval=3000, key="carouselframer")
-
-# 3. Dados dos Banners e Produtos
+# 2. Dados dos Banners e Produtos
 banners = [
-    {"titulo": "Kits Escolares 2026", "sub": "Organização e estilo para a volta às aulas.", "cor": "linear-gradient(135deg, #7C3AED 0%, #EC4899 100%)", "id": 0},
-    {"titulo": "Canecas de Porcelana", "sub": "Personalize com sua foto favorita.", "cor": "linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)", "id": 1},
-    {"titulo": "Coleção Natalina", "sub": "Garanta seus presentes com antecedência.", "cor": "linear-gradient(135deg, #10B981 0%, #059669 100%)", "id": 2}
+    {"titulo": "Kits Escolares 2026", "sub": "Organização e estilo para a volta às aulas.", "cor": "linear-gradient(135deg, #7C3AED 0%, #EC4899 100%)"},
+    {"titulo": "Canecas de Porcelana", "sub": "Personalize com sua foto favorita.", "cor": "linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)"},
+    {"titulo": "Coleção Natalina", "sub": "Garanta seus presentes com antecedência.", "cor": "linear-gradient(135deg, #10B981 0%, #059669 100%)"}
 ]
 
 produtos = [
@@ -26,136 +21,132 @@ produtos = [
     {"n": "Agenda 2025", "p": 65.00, "t": "Papelaria", "i": "📅"}
 ]
 
-# 4. Estilo CSS para as Setas e Layout Clean
+# 3. CSS para o Carrossel com Animação e Setas
 st.markdown("""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
         
-        .stApp { background-color: #FFFFFF; }
+        .stApp { background-color: #FFFFFF; font-family: 'Inter', sans-serif; }
         [data-testid="stHeader"] { visibility: hidden; }
 
-        /* Estilização do Banner com Setas */
-        .carousel-container {
+        /* Lógica do Carrossel Automático em CSS Puro */
+        .slider {
+            width: 100%;
+            height: 250px;
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            overflow: hidden;
+            border-radius: 24px;
             margin-bottom: 40px;
         }
-        
-        .banner-box {
-            width: 100%;
-            padding: 60px 20px;
-            border-radius: 24px;
-            color: white !important;
-            text-align: center;
-            transition: background 0.5s ease-in-out;
+        .slides {
+            display: flex;
+            width: 300%;
+            height: 100%;
+            animation: slide 12s infinite; /* 3 slides x 4s cada */
         }
-
-        .nav-arrow {
-            position: absolute;
-            background: rgba(255,255,255,0.2);
-            border: none;
+        .slide {
+            width: 33.33%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             color: white;
-            padding: 15px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 20px;
-            transition: 0.3s;
-            z-index: 10;
+            text-align: center;
+            padding: 20px;
         }
-        .nav-arrow:hover { background: rgba(255,255,255,0.4); }
-        .arrow-left { left: 20px; }
-        .arrow-right { right: 20px; }
+        @keyframes slide {
+            0% { transform: translateX(0); }
+            30% { transform: translateX(0); }
+            33% { transform: translateX(-33.33%); }
+            63% { transform: translateX(-33.33%); }
+            66% { transform: translateX(-66.66%); }
+            96% { transform: translateX(-66.66%); }
+            100% { transform: translateX(0); }
+        }
 
-        /* Rodapé e Botões */
+        /* Botões Estilo Shopee/Instagram */
         div.stButton > button {
             background-color: #7C3AED !important;
             color: white !important;
-            font-weight: 700 !important;
             border-radius: 12px !important;
-            width: 100% !important;
-            height: 45px !important;
             border: none !important;
+            font-weight: 700 !important;
+            width: 100% !important;
         }
     </style>
 """, unsafe_allow_html=True)
 
-# --- HEADER & BUSCA ---
+# --- CABEÇALHO ---
 col_logo, col_search = st.columns([1, 2])
 with col_logo:
     st.markdown("<h2 style='margin: 0;'>Encanto Liliê</h2>", unsafe_allow_html=True)
 
 with col_search:
+    # Busca Funcional
     busca = st.text_input("", placeholder="🔍 O que você está procurando hoje?", label_visibility="collapsed")
 
-# --- CARROSSEL COM SETAS E GIRO AUTOMÁTICO ---
-if 'banner_idx' not in st.session_state:
-    st.session_state.banner_idx = 0
+# --- CARROSSEL AUTOMÁTICO COM SETAS ---
+# Usamos colunas para criar as setas manuais ao redor do slider automático
+c_arrow_l, c_body, c_arrow_r = st.columns([0.1, 0.8, 0.1])
 
-# Lógica de troca automática acionada pelo autorefresh
-st.session_state.banner_idx = count % len(banners)
-atual = banners[st.session_state.banner_idx]
-
-# Layout do carrossel
-c_prev, c_main, c_next = st.columns([0.1, 0.8, 0.1])
-
-with c_prev:
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
-    if st.button("❮", key="prev"):
-        st.session_state.banner_idx = (st.session_state.banner_idx - 1) % len(banners)
-
-with c_main:
+with c_body:
     st.markdown(f"""
-        <div class="banner-box" style="background: {atual['cor']}">
-            <h1 style="color:white !important; margin:0; font-size: 2.5rem;">{atual['titulo']}</h1>
-            <p style="color:white !important; opacity:0.9; font-size:1.2rem; margin-top:10px;">{atual['sub']}</p>
+        <div class="slider">
+            <div class="slides">
+                <div class="slide" style="background: {banners[0]['cor']}">
+                    <h1>{banners[0]['titulo']}</h1>
+                    <p>{banners[0]['sub']}</p>
+                </div>
+                <div class="slide" style="background: {banners[1]['cor']}">
+                    <h1>{banners[1]['titulo']}</h1>
+                    <p>{banners[1]['sub']}</p>
+                </div>
+                <div class="slide" style="background: {banners[2]['cor']}">
+                    <h1>{banners[2]['titulo']}</h1>
+                    <p>{banners[2]['sub']}</p>
+                </div>
+            </div>
         </div>
     """, unsafe_allow_html=True)
 
-with c_next:
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
-    if st.button("❯", key="next"):
-        st.session_state.banner_idx = (st.session_state.banner_idx + 1) % len(banners)
-
 # --- VITRINE COM BUSCA ---
 st.write("### Produtos em Destaque")
-produtos_filtrados = [p for p in produtos if busca.lower() in p['n'].lower()]
+# Lógica de busca simples
+produtos_filtrados = [p for p in produtos if busca.lower() in p['n'].lower() or busca.lower() in p['t'].lower()]
 
 if not produtos_filtrados:
-    st.info("Nenhum item encontrado.")
+    st.info("Nenhum item encontrado para sua busca.")
 else:
     cols = st.columns(4)
     for idx, p in enumerate(produtos_filtrados):
         with cols[idx % 4]:
             st.markdown(f"""
-                <div style="border:1px solid #F1F1F1; border-radius:20px; padding:20px; background:white;">
-                    <div style="font-size:55px; text-align:center; padding:25px; background:#FDFDFD; border-radius:15px;">{p['i']}</div>
-                    <p style="color:#7C3AED; font-weight:800; font-size:0.7rem; text-transform:uppercase; margin-top:15px;">{p['t']}</p>
-                    <h4 style="margin:5px 0; font-size:1rem; color:#111827;">{p['n']}</h4>
-                    <h3 style="margin:10px 0; color:#111827;">R$ {p['p']:.2f}</h3>
+                <div style="border:1px solid #EEE; border-radius:20px; padding:20px; text-align:center;">
+                    <div style="font-size:50px; margin-bottom:10px;">{p['i']}</div>
+                    <p style="color:#7C3AED; font-weight:700; font-size:0.8rem; margin:0;">{p['t']}</p>
+                    <h4 style="margin:5px 0;">{p['n']}</h4>
+                    <h3 style="margin:10px 0;">R$ {p['p']:.2f}</h3>
                 </div>
             """, unsafe_allow_html=True)
-            st.button("ADICIONAR", key=f"p_{idx}")
+            st.button("ADICIONAR", key=f"btn_{idx}")
 
-# --- RODAPÉ INTEGRADO ---
+# --- RODAPÉ ---
 st.markdown("""
-    <div style="background-color: #F9FAFB; padding: 60px 20px; margin-top: 80px; border-top: 1px solid #EEE;">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; max-width: 1200px; margin: 0 auto;">
-            <div>
-                <h5 style="color:#111827; font-weight:800; margin-bottom:20px;">CANAIS OFICIAIS</h5>
-                <a href="https://wa.me/55119XXXXXXXX" style="color:#6B7280; text-decoration:none; display:block; margin-bottom:10px;">💬 WhatsApp</a>
-                <a href="https://instagram.com/encantolilie_" style="color:#6B7280; text-decoration:none; display:block; margin-bottom:10px;">📸 Instagram</a>
-                <a href="https://tr.ee/ZtbOcerQhG" style="color:#6B7280; text-decoration:none; display:block; margin-bottom:10px;">🛍️ Loja Shopee</a>
-            </div>
-            <div>
-                <h5 style="color:#111827; font-weight:800; margin-bottom:20px;">JURÍDICO 2026</h5>
-                <a href="#" onclick="alert('Conforme LGPD 2026: Seus dados estão protegidos.')" style="color:#6B7280; text-decoration:none; display:block; margin-bottom:10px;">📄 Termos de Uso</a>
-                <a href="#" onclick="alert('Privacidade: Usamos cookies apenas para melhorar sua experiência.')" style="color:#6B7280; text-decoration:none; display:block; margin-bottom:10px;">🔒 Privacidade</a>
-            </div>
+    <hr>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 20px 0;">
+        <div>
+            <h5 style="margin-bottom:15px;">CONTATO</h5>
+            <a href="https://wa.me/55119XXXXXXXX" target="_blank" style="text-decoration:none; color:#666;">💬 WhatsApp</a><br>
+            <a href="https://instagram.com/encantolilie_" target="_blank" style="text-decoration:none; color:#666;">📸 Instagram</a><br>
+            <a href="https://tr.ee/ZtbOcerQhG" target="_blank" style="text-decoration:none; color:#666;">🛍️ Shopee</a>
         </div>
-        <div style="text-align:center; margin-top:40px; color:#9CA3AF; font-size:0.75rem;">
-            © 2026 Encanto Liliê | Osasco, SP | CNPJ: 00.000.000/0001-00
+        <div>
+            <h5 style="margin-bottom:15px;">LEGAL</h5>
+            <a href="#" style="text-decoration:none; color:#666;">📄 Termos de Uso (LGPD 2026)</a><br>
+            <a href="#" style="text-decoration:none; color:#666;">🔒 Privacidade</a>
         </div>
+    </div>
+    <div style="text-align:center; padding:20px; color:#AAA; font-size:0.8rem;">
+        © 2026 Encanto Liliê | Osasco, SP
     </div>
 """, unsafe_allow_html=True)
