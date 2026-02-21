@@ -21,13 +21,24 @@ produtos = [
     {"n": "Agenda 2025", "p": 65.00, "t": "Papelaria", "i": "📅"}
 ]
 
-# 3. CSS para o Carrossel com Animação e Setas
+# 3. CSS (Incluindo Fonte Script e Layout do Carrossel)
 st.markdown("""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
+        /* Importando Inter para texto normal e Dancing Script para o Título */
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;700;800&display=swap');
         
         .stApp { background-color: #FFFFFF; font-family: 'Inter', sans-serif; }
         [data-testid="stHeader"] { visibility: hidden; }
+
+        /* Estilo do Título Principal */
+        .loja-titulo {
+            text-align: center;
+            font-family: 'Dancing Script', cursive;
+            color: #7C3AED;
+            font-size: 4rem;
+            margin-bottom: 10px;
+            margin-top: -30px;
+        }
 
         /* Lógica do Carrossel Automático em CSS Puro */
         .slider {
@@ -36,6 +47,7 @@ st.markdown("""
             position: relative;
             overflow: hidden;
             border-radius: 24px;
+            margin-top: 30px;
             margin-bottom: 40px;
         }
         .slides {
@@ -76,17 +88,16 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- CABEÇALHO ---
-col_logo, col_search = st.columns([1, 2])
-with col_logo:
-    st.markdown("<h2 style='margin: 0;'>Encanto Liliê</h2>", unsafe_allow_html=True)
+# --- CABEÇALHO CENTRALIZADO E BUSCA ---
+st.markdown("<div class='loja-titulo'>Encanto Liliê</div>", unsafe_allow_html=True)
 
-with col_search:
-    # Busca Funcional
+# Usando colunas para manter a busca no centro, sem ocupar a tela inteira de ponta a ponta
+col_vazia1, col_busca, col_vazia2 = st.columns([1, 2, 1])
+
+with col_busca:
     busca = st.text_input("", placeholder="🔍 O que você está procurando hoje?", label_visibility="collapsed")
 
 # --- CARROSSEL AUTOMÁTICO COM SETAS ---
-# Usamos colunas para criar as setas manuais ao redor do slider automático
 c_arrow_l, c_body, c_arrow_r = st.columns([0.1, 0.8, 0.1])
 
 with c_body:
@@ -111,7 +122,6 @@ with c_body:
 
 # --- VITRINE COM BUSCA ---
 st.write("### Produtos em Destaque")
-# Lógica de busca simples
 produtos_filtrados = [p for p in produtos if busca.lower() in p['n'].lower() or busca.lower() in p['t'].lower()]
 
 if not produtos_filtrados:
@@ -123,30 +133,16 @@ else:
             st.markdown(f"""
                 <div style="border:1px solid #EEE; border-radius:20px; padding:20px; text-align:center;">
                     <div style="font-size:50px; margin-bottom:10px;">{p['i']}</div>
-                    <p style="color:#7C3AED; font-weight:700; font-size:0.8rem; margin:0;">{p['t']}</p>
-                    <h4 style="margin:5px 0;">{p['n']}</h4>
-                    <h3 style="margin:10px 0;">R$ {p['p']:.2f}</h3>
+                    <p style="color:#7C3AED; font-weight:700; font-size:0.8rem; margin:0; text-transform:uppercase;">{p['t']}</p>
+                    <h4 style="margin:5px 0; color:#111827;">{p['n']}</h4>
+                    <h3 style="margin:10px 0; color:#111827;">R$ {p['p']:.2f}</h3>
                 </div>
             """, unsafe_allow_html=True)
             st.button("ADICIONAR", key=f"btn_{idx}")
 
-# --- RODAPÉ ---
+# --- RODAPÉ ALINHADO ---
 st.markdown("""
-    <hr>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 20px 0;">
-        <div>
-            <h5 style="margin-bottom:15px;">CONTATO</h5>
-            <a href="https://wa.me/55119XXXXXXXX" target="_blank" style="text-decoration:none; color:#666;">💬 WhatsApp</a><br>
-            <a href="https://instagram.com/encantolilie_" target="_blank" style="text-decoration:none; color:#666;">📸 Instagram</a><br>
-            <a href="https://tr.ee/ZtbOcerQhG" target="_blank" style="text-decoration:none; color:#666;">🛍️ Shopee</a>
-        </div>
-        <div>
-            <h5 style="margin-bottom:15px;">LEGAL</h5>
-            <a href="#" style="text-decoration:none; color:#666;">📄 Termos de Uso (LGPD 2026)</a><br>
-            <a href="#" style="text-decoration:none; color:#666;">🔒 Privacidade</a>
-        </div>
-    </div>
-    <div style="text-align:center; padding:20px; color:#AAA; font-size:0.8rem;">
-        © 2026 Encanto Liliê | Osasco, SP
-    </div>
-""", unsafe_allow_html=True)
+    <hr style="margin-top: 60px;">
+    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 80px; padding: 20px 0;">
+        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <h5 style="margin-bottom:15px; color:#11182
