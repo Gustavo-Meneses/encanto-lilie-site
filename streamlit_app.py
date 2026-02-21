@@ -21,26 +21,25 @@ produtos = [
     {"n": "Agenda 2025", "p": 65.00, "t": "Papelaria", "i": "📅"}
 ]
 
-# 3. CSS (Incluindo Fonte Script e Layout do Carrossel)
+# 3. CSS (Fonte Script, Alinhamentos e Animação do Carrossel)
 st.markdown("""
     <style>
-        /* Importando Inter para texto normal e Dancing Script para o Título */
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;700;800&display=swap');
         
         .stApp { background-color: #FFFFFF; font-family: 'Inter', sans-serif; }
         [data-testid="stHeader"] { visibility: hidden; }
 
-        /* Estilo do Título Principal */
+        /* Estilo do Título Principal Centralizado */
         .loja-titulo {
             text-align: center;
             font-family: 'Dancing Script', cursive;
             color: #7C3AED;
-            font-size: 4rem;
-            margin-bottom: 10px;
-            margin-top: -30px;
+            font-size: 4.5rem;
+            margin-bottom: 5px;
+            margin-top: -40px;
         }
 
-        /* Lógica do Carrossel Automático em CSS Puro */
+        /* Lógica do Carrossel Automático */
         .slider {
             width: 100%;
             height: 250px;
@@ -54,7 +53,7 @@ st.markdown("""
             display: flex;
             width: 300%;
             height: 100%;
-            animation: slide 12s infinite; /* 3 slides x 4s cada */
+            animation: slide 12s infinite; 
         }
         .slide {
             width: 33.33%;
@@ -76,7 +75,7 @@ st.markdown("""
             100% { transform: translateX(0); }
         }
 
-        /* Botões Estilo Shopee/Instagram */
+        /* Botões */
         div.stButton > button {
             background-color: #7C3AED !important;
             color: white !important;
@@ -88,18 +87,16 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- CABEÇALHO CENTRALIZADO E BUSCA ---
+# --- CABEÇALHO ---
 st.markdown("<div class='loja-titulo'>Encanto Liliê</div>", unsafe_allow_html=True)
 
-# Usando colunas para manter a busca no centro, sem ocupar a tela inteira de ponta a ponta
+# Busca Centralizada
 col_vazia1, col_busca, col_vazia2 = st.columns([1, 2, 1])
-
 with col_busca:
     busca = st.text_input("", placeholder="🔍 O que você está procurando hoje?", label_visibility="collapsed")
 
-# --- CARROSSEL AUTOMÁTICO COM SETAS ---
+# --- CARROSSEL ---
 c_arrow_l, c_body, c_arrow_r = st.columns([0.1, 0.8, 0.1])
-
 with c_body:
     st.markdown(f"""
         <div class="slider">
@@ -120,7 +117,7 @@ with c_body:
         </div>
     """, unsafe_allow_html=True)
 
-# --- VITRINE COM BUSCA ---
+# --- VITRINE ---
 st.write("### Produtos em Destaque")
 produtos_filtrados = [p for p in produtos if busca.lower() in p['n'].lower() or busca.lower() in p['t'].lower()]
 
@@ -140,9 +137,23 @@ else:
             """, unsafe_allow_html=True)
             st.button("ADICIONAR", key=f"btn_{idx}")
 
-# --- RODAPÉ ALINHADO ---
+# --- RODAPÉ ---
 st.markdown("""
     <hr style="margin-top: 60px;">
     <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 80px; padding: 20px 0;">
         <div style="display: flex; flex-direction: column; align-items: flex-start;">
-            <h5 style="margin-bottom:15px; color:#11182
+            <h5 style="margin-bottom:15px; color:#111827; font-weight:800;">CONTATO</h5>
+            <a href="https://wa.me/55119XXXXXXXX" target="_blank" style="text-decoration:none; color:#666; margin-bottom:8px; font-size:0.95rem;">💬 WhatsApp</a>
+            <a href="https://instagram.com/encantolilie_" target="_blank" style="text-decoration:none; color:#666; margin-bottom:8px; font-size:0.95rem;">📸 Instagram</a>
+            <a href="https://tr.ee/ZtbOcerQhG" target="_blank" style="text-decoration:none; color:#666; margin-bottom:8px; font-size:0.95rem;">🛍️ Loja Shopee</a>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <h5 style="margin-bottom:15px; color:#111827; font-weight:800;">LEGAL</h5>
+            <a href="#" style="text-decoration:none; color:#666; margin-bottom:8px; font-size:0.95rem;">📄 Termos de Uso (LGPD 2026)</a>
+            <a href="#" style="text-decoration:none; color:#666; margin-bottom:8px; font-size:0.95rem;">🔒 Privacidade e Dados</a>
+        </div>
+    </div>
+    <div style="text-align:center; padding:20px; color:#AAA; font-size:0.8rem;">
+        © 2026 Encanto Liliê | Osasco, SP | CNPJ: 00.000.000/0001-00
+    </div>
+""", unsafe_allow_html=True)
