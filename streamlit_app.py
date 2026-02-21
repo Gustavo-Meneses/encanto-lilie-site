@@ -15,51 +15,71 @@ def adicionar_ao_carrinho(nome, preco):
     st.session_state.carrinho.append({"nome": nome, "preco": preco})
     st.toast(f"✅ {nome} adicionado!", icon="🛒")
 
-# 3. CSS Responsivo (Foco em Mobile)
+# 3. CSS Ajustado para Alto Contraste (Mobile Friendly)
 st.markdown("""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;600;800&display=swap');
         
-        /* Reset para Mobile */
+        /* Fundo e Fonte Base */
         .stApp { background-color: #FFFFFF; font-family: 'Inter', sans-serif; }
         [data-testid="stHeader"] { display: none; }
         
-        /* Título Adaptável */
+        /* Título Principal - Roxo Vibrante e Legível */
         .loja-titulo {
             text-align: center;
             font-family: 'Dancing Script', cursive;
             color: #7C3AED;
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-size: clamp(3rem, 10vw, 5rem);
+            margin: 20px 0;
+            font-weight: 800;
+        }
+
+        /* Cores de Fonte para Legibilidade Máxima */
+        h1, h2, h3, h4, p, span, label {
+            color: #000000 !important; /* Tudo em preto para máximo contraste */
+        }
+        
+        .subtitulo-banner {
+            color: #FFFFFF !important; /* Exceção para texto dentro do banner roxo */
+            font-weight: 600;
+        }
+
+        /* Card de Produto */
+        .card-produto {
+            border: 2px solid #F3F4F6;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+            background: #FFFFFF;
+        }
+        
+        .preco-produto {
+            color: #111827 !important;
+            font-size: 1.5rem;
+            font-weight: 800;
             margin: 10px 0;
         }
 
-        /* Container de Produtos Responsivo */
-        .card-produto {
-            border: 1px solid #EEE;
-            border-radius: 20px;
-            padding: 15px;
-            text-align: center;
-            margin-bottom: 20px;
-            background: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-        }
-
-        /* Banner Mobile Friendly */
+        /* Banner */
         .banner-container {
             background: linear-gradient(135deg, #7C3AED, #EC4899);
-            color: white;
-            padding: 30px 20px;
-            border-radius: 20px;
+            padding: 40px 20px;
+            border-radius: 24px;
             text-align: center;
             margin: 20px 0;
         }
+        .banner-container h2 { color: #FFFFFF !important; }
 
-        /* Ajuste para botões não sumirem no mobile */
+        /* Botões mais escuros para destaque */
         div.stButton > button {
-            width: 100% !important;
+            background-color: #7C3AED !important;
+            color: #FFFFFF !important;
             border-radius: 12px !important;
-            padding: 10px !important;
+            padding: 12px !important;
             font-weight: 700 !important;
+            border: none !important;
+            box-shadow: 0 4px 6px rgba(124, 58, 237, 0.3);
         }
     </style>
 """, unsafe_allow_html=True)
@@ -67,49 +87,44 @@ st.markdown("""
 # --- CABEÇALHO ---
 st.markdown("<div class='loja-titulo'>Encanto Liliê</div>", unsafe_allow_html=True)
 
-# Centralizar busca em qualquer tela
-_, col_busca, _ = st.columns([1, 6, 1])
+# Busca com bordas mais visíveis
+_, col_busca, _ = st.columns([1, 8, 1])
 with col_busca:
-    busca = st.text_input("", placeholder="🔍 O que você procura?", label_visibility="collapsed")
+    busca = st.text_input("O que você procura?", placeholder="🔍 Digite aqui...", label_visibility="collapsed")
 
-# --- CARRINHO (EXPANDER NO TOPO PARA MOBILE) ---
-with st.expander(f"🛒 Meu Carrinho ({len(st.session_state.carrinho)} itens)"):
+# --- CARRINHO (EXPANDER) ---
+with st.expander(f"🛒 VER MEU CARRINHO ({len(st.session_state.carrinho)})"):
     if not st.session_state.carrinho:
-        st.write("Seu carrinho está vazio.")
+        st.write("**Seu carrinho está vazio.**")
     else:
         total = sum(item['preco'] for item in st.session_state.carrinho)
-        for i, item in enumerate(st.session_state.carrinho):
-            st.write(f"**{item['nome']}** - R$ {item['preco']:.2f}")
+        for item in st.session_state.carrinho:
+            st.write(f"● **{item['nome']}** - R$ {item['preco']:.2f}")
         
-        st.divider()
-        st.subheader(f"Total: R$ {total:.2f}")
+        st.markdown(f"### Total: R$ {total:.2f}")
         
-        # Dados do Cliente
-        nome = st.text_input("Seu Nome")
-        tel = st.text_input("Seu WhatsApp")
+        # Dados do Cliente com labels em negrito
+        st.markdown("**Preencha para enviar o pedido:**")
+        nome = st.text_input("Seu Nome Completo")
+        tel = st.text_input("Seu WhatsApp (com DDD)")
         
-        if st.button("Finalizar no WhatsApp", key="finalizar"):
+        if st.button("FINALIZAR PEDIDO NO WHATSAPP"):
             if nome and tel:
                 itens_txt = "%0A".join([f"- {i['nome']} (R$ {i['preco']:.2f})" for i in st.session_state.carrinho])
                 msg = f"Olá! Pedido de: *{nome}*%0A%0A*ITENS:*%0A{itens_txt}%0A%0ATotal: R$ {total:.2f}"
-                link = f"https://wa.me/5511977253425?text={msg}"
-                st.markdown(f' <a href="{link}" target="_blank" style="text-decoration:none;"><div style="background-color:#25D366; color:white; padding:12px; border-radius:10px; text-align:center; font-weight:bold;">ENVIAR AGORA</div></a>', unsafe_allow_html=True)
+                st.markdown(f' <a href="https://wa.me/5511977253425?text={msg}" target="_blank" style="text-decoration:none;"><div style="background-color:#25D366; color:white; padding:15px; border-radius:12px; text-align:center; font-weight:bold; font-size:1.1rem;">CLIQUE AQUI PARA ENVIAR</div></a>', unsafe_allow_html=True)
             else:
-                st.error("Preencha nome e telefone.")
-        
-        if st.button("Esvaziar Carrinho"):
-            st.session_state.carrinho = []
-            st.rerun()
+                st.error("Por favor, preencha o nome e telefone.")
 
-# --- CONTEÚDO ---
+# --- BANNER DESTAQUE ---
 st.markdown("""
     <div class="banner-container">
-        <h2>Kits Escolares 2026</h2>
-        <p>Personalização que encanta!</p>
+        <h2>Lançamentos 2026</h2>
+        <p class="subtitulo-banner">Kits Escolares e Personalizados com Amor</p>
     </div>
 """, unsafe_allow_html=True)
 
-# Vitrine Responsiva (Garante que no mobile os cards fiquem um abaixo do outro)
+# --- VITRINE ---
 produtos = [
     {"n": "Kit Marmitinha", "p": 45.90, "i": "🍱"},
     {"n": "Caneca Pet", "p": 39.90, "i": "☕"},
@@ -117,30 +132,31 @@ produtos = [
     {"n": "Agenda 2026", "p": 65.00, "i": "📅"}
 ]
 
-# Filtragem
 prod_filtrados = [p for p in produtos if busca.lower() in p['n'].lower()]
 
-# Grid que se adapta: 4 colunas no PC, 1 ou 2 no Celular
-cols = st.columns([1, 1, 1, 1] if len(prod_filtrados) >= 4 else len(prod_filtrados))
+# Grid Responsivo
+cols = st.columns(2) # 2 colunas no mobile fica excelente para leitura
 for idx, p in enumerate(prod_filtrados):
-    with cols[idx % (4 if len(prod_filtrados) >= 4 else len(prod_filtrados))]:
+    with cols[idx % 2]:
         st.markdown(f"""
             <div class="card-produto">
-                <div style="font-size:40px;">{p['i']}</div>
-                <h4>{p['n']}</h4>
-                <p>R$ {p['p']:.2f}</p>
+                <div style="font-size:50px; margin-bottom:10px;">{p['i']}</div>
+                <h4 style="font-size:1.1rem; margin-bottom:5px;">{p['n']}</h4>
+                <div class="preco-produto">R$ {p['p']:.2f}</div>
             </div>
         """, unsafe_allow_html=True)
         if st.button("ADICIONAR", key=f"btn_{idx}"):
             adicionar_ao_carrinho(p['n'], p['p'])
 
-# --- RODAPÉ (RESTAURADO E FIXO) ---
+# --- RODAPÉ ---
 st.markdown("""
-    <hr style="margin-top: 50px;">
-    <div style="text-align: center; padding-bottom: 40px;">
-        <h5 style="color: #7C3AED;">CONTATO</h5>
-        <p>📸 <a href="https://instagram.com/encantolilie_" style="color:#666; text-decoration:none;">@encantolilie_</a></p>
-        <p>💬 <a href="https://wa.me/5511977253425" style="color:#666; text-decoration:none;">(11) 97725-3425</a></p>
-        <p style="font-size: 0.8rem; color: #AAA; margin-top: 20px;">© 2026 Encanto Liliê | Osasco, SP</p>
+    <hr style="margin-top: 50px; border: 1px solid #000;">
+    <div style="text-align: center; padding: 20px; background-color: #F9FAFB; border-radius: 20px;">
+        <h4 style="margin-bottom:15px;">CONTATO DIRETO</h4>
+        <p style="font-size:1.1rem;"><strong>Instagram:</strong> <a href="https://instagram.com/encantolilie_" style="color:#7C3AED;">@encantolilie_</a></p>
+        <p style="font-size:1.1rem;"><strong>WhatsApp:</strong> <a href="https://wa.me/5511977253425" style="color:#7C3AED;">(11) 97725-3425</a></p>
+        <br>
+        <p style="font-size: 0.8rem; color: #555 !important;">© 2026 Encanto Liliê | Osasco, SP</p>
     </div>
+    <div style="height: 50px;"></div>
 """, unsafe_allow_html=True)
