@@ -1,203 +1,169 @@
 import streamlit as st
+import time
 
-# 1. Configuração da Página
+# 1. Configuração de Página
 st.set_page_config(
-    page_title="Encanto Liliê | Vitrine Criativa",
+    page_title="Encanto Liliê | Vitrine 2026",
     page_icon="🌸",
     layout="wide",
 )
 
-# 2. CSS Estilo Vitrine Clean (Inspirado no layout solicitado)
-st.markdown("""
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+# 2. Dados dos Produtos e Carrossel
+produtos = [
+    {"n": "Kit Marmitinha", "p": 45.90, "t": "Aniversário", "i": "🍱"},
+    {"n": "Caneca Pet", "p": 39.90, "t": "Presentes", "i": "☕"},
+    {"n": "Kit Escolar Hulk", "p": 89.00, "t": "Escolar", "i": "🎒"},
+    {"n": "Agenda 2025", "p": 65.00, "t": "Papelaria", "i": "📅"}
+]
+
+banners = [
+    {"titulo": "Kits Escolares 2026", "sub": "Organização e estilo para a volta às aulas.", "cor": "linear-gradient(135deg, #7C3AED 0%, #EC4899 100%)"},
+    {"titulo": "Canecas de Porcelana", "sub": "Personalize com sua foto favorita.", "cor": "linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)"},
+    {"titulo": "Coleção Natalina", "sub": "Garanta seus presentes com antecedência.", "cor": "linear-gradient(135deg, #10B981 0%, #059669 100%)"}
+]
+
+# 3. Estilo CSS (Foco em Clean Design e Rodapé)
+st.markdown(f"""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
         
-        /* Reset e Fundo */
-        .stApp { background-color: #FDFDFD; }
-        [data-testid="stHeader"] { visibility: hidden; }
-        .block-container { padding: 1rem 2rem !important; max-width: 1100px; }
-
-        /* CABEÇALHO CLEAN */
-        .header-container {
+        .stApp {{ background-color: #FFFFFF; }}
+        [data-testid="stHeader"] {{ visibility: hidden; }}
+        
+        /* Cabeçalho */
+        .header-clean {{
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #F1F1F1;
-            margin-bottom: 25px;
-        }
-        .logo-text {
-            font-family: 'Inter', sans-serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: #111827 !important;
-        }
-        .search-bar-sim {
-            background: #F3F4F6;
-            padding: 8px 15px;
-            border-radius: 20px;
-            width: 40%;
-            color: #9CA3AF;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* BANNER NOVIDADE */
-        .hero-banner {
-            background: linear-gradient(135deg, #8B5CF6 0%, #D946EF 100%);
-            border-radius: 16px;
+            padding: 20px 0;
+            border-bottom: 1px solid #F3F4F6;
+        }}
+        
+        /* Banner Carrossel */
+        .banner-box {{
             padding: 40px;
+            border-radius: 20px;
             color: white !important;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-        }
-        .hero-text h1 { color: white !important; font-size: 2rem !important; margin: 0; }
-        .hero-text p { color: #F5F3FF !important; opacity: 0.9; margin-top: 10px; }
+            text-align: center;
+            transition: all 0.5s ease;
+            margin: 20px 0;
+        }}
 
-        /* CATEGORIAS (CHIPS) */
-        .category-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        .cat-chip {
-            background: #F3E8FF;
-            color: #7C3AED !important;
-            padding: 6px 16px;
-            border-radius: 100px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            border: 1px solid #DDD6FE;
-        }
-
-        /* CARD DE PRODUTO CLEAN */
-        .product-box {
-            background: white;
-            border: 1px solid #E5E7EB;
-            border-radius: 12px;
-            padding: 0;
-            text-align: left;
-            transition: 0.2s;
-            margin-bottom: 15px;
-        }
-        .product-box:hover { border-color: #8B5CF6; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .img-area {
-            background: #F9FAFB;
-            height: 180px;
-            border-radius: 12px 12px 0 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 50px;
-        }
-        .info-area { padding: 15px; }
-        .info-area span { font-size: 0.7rem; font-weight: 700; color: #8B5CF6; text-transform: uppercase; }
-        .info-area h4 { font-size: 1rem !important; margin: 5px 0 !important; color: #111827 !important; }
-        .price { font-size: 1.2rem; font-weight: 700; color: #111827; }
-
-        /* BOTÃO ADICIONAR */
-        div.stButton > button {
+        /* Botão Adicionar */
+        div.stButton > button {{
             background-color: #7C3AED !important;
             color: white !important;
-            border: none !important;
-            border-radius: 8px !important;
-            width: 100% !important;
             font-weight: 700 !important;
-            height: 40px !important;
-            font-size: 0.8rem !important;
-        }
+            border-radius: 10px !important;
+            width: 100% !important;
+            height: 45px !important;
+            border: none !important;
+        }}
 
-        /* RODAPÉ CLEAN */
-        .footer-clean {
-            border-top: 1px solid #F1F1F1;
-            margin-top: 60px;
-            padding: 30px 0;
-            text-align: left;
-        }
-        .footer-links { display: flex; gap: 20px; margin-bottom: 15px; }
-        .footer-links a { color: #6B7280 !important; text-decoration: none; font-size: 0.85rem; font-weight: 500; }
-        .copyright { color: #9CA3AF !important; font-size: 0.75rem; }
+        /* Rodapé Profissional */
+        .footer-v2 {{
+            background-color: #F9FAFB;
+            padding: 50px 20px;
+            margin-top: 80px;
+            border-top: 1px solid #E5E7EB;
+        }}
+        .footer-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }}
+        .footer-col h5 {{ color: #111827; font-weight: 800; margin-bottom: 15px; }}
+        .footer-col a {{ 
+            color: #6B7280 !important; 
+            text-decoration: none; 
+            display: block; 
+            margin-bottom: 10px; 
+            font-size: 0.9rem;
+        }}
+        .footer-col a:hover {{ color: #7C3AED !important; }}
     </style>
 """, unsafe_allow_html=True)
 
 # --- CABEÇALHO ---
-st.markdown("""
-    <div class="header-container">
-        <div class="logo-text">Encanto Liliê</div>
-        <div class="search-bar-sim">
-            <span class="material-symbols-rounded">search</span> Buscar na loja...
+col_logo, col_search = st.columns([1, 2])
+with col_logo:
+    st.markdown("<h2 style='margin-top:10px;'>Encanto Liliê</h2>", unsafe_allow_html=True)
+
+with col_search:
+    busca = st.text_input("", placeholder="🔍 O que você está procurando hoje?", label_visibility="collapsed")
+
+# --- CARROSSEL AUTOMÁTICO ---
+# Lógica de tempo para 2026: Carrossel reseta a cada 3 segundos
+if 'count' not in st.session_state:
+    st.session_state.count = 0
+
+placeholder_banner = st.empty()
+atual = banners[st.session_state.count % len(banners)]
+
+with placeholder_banner.container():
+    st.markdown(f"""
+        <div class="banner-box" style="background: {atual['cor']}">
+            <h1 style="color:white !important;">{atual['titulo']}</h1>
+            <p style="color:white !important; font-size:1.2rem;">{atual['sub']}</p>
         </div>
-        <div style="display:flex; gap:15px; color:#6B7280;">
-             <span class="material-symbols-rounded">shopping_cart</span>
-             <span class="material-symbols-rounded">person</span>
-        </div>
-    </div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
-# --- BANNER ---
-st.markdown("""
-    <div class="hero-banner">
-        <div class="hero-text">
-            <p style="background:rgba(255,255,255,0.2); display:inline-block; padding:2px 10px; border-radius:5px; font-size:0.7rem; font-weight:700;">NOVIDADE!</p>
-            <h1>Kits de Decoração para Festas</h1>
-            <p>Transforme momentos em memórias inesquecíveis.</p>
-        </div>
-        <div style="font-size:80px; opacity:0.8;">✨</div>
-    </div>
-""", unsafe_allow_html=True)
+# Lógica de rotação (Em um app real, o usuário interage ou o script re-executa)
+# Aqui usamos um botão discreto para simular a troca ou o refresh do Streamlit
+if st.button("Próxima Novidade ❯"):
+    st.session_state.count += 1
+    st.rerun()
 
-# --- CATEGORIAS ---
-st.markdown("""
-    <div class="category-container">
-        <div class="cat-chip">🎄 Natal 2025</div>
-        <div class="cat-chip">📚 Escolar</div>
-        <div class="cat-chip">☕ Canecas</div>
-        <div class="cat-chip">🎂 Aniversário</div>
-    </div>
-""", unsafe_allow_html=True)
+# --- VITRINE COM BUSCA ---
+st.write("### Nossos Produtos")
 
-# --- PRODUTOS ---
-st.markdown("### Produtos em Destaque")
-col1, col2, col3, col4 = st.columns(4)
+# Filtragem funcional
+produtos_filtrados = [p for p in produtos if busca.lower() in p['n'].lower() or busca.lower() in p['t'].lower()]
 
-produtos = [
-    {"n": "Kit Marmitinha", "p": "R$ 45,90", "t": "Aniversário", "i": "🍱"},
-    {"n": "Caneca Pet", "p": "R$ 39,90", "t": "Presentes", "i": "☕"},
-    {"n": "Kit Escolar Hulk", "p": "R$ 89,00", "t": "Volta às Aulas", "i": "🎒"},
-    {"n": "Agenda 2025", "p": "R$ 65,00", "t": "Papelaria", "i": "📅"}
-]
-
-for idx, p in enumerate(produtos):
-    with [col1, col2, col3, col4][idx]:
-        st.markdown(f"""
-            <div class="product-box">
-                <div class="img-area">{p['i']}</div>
-                <div class="info-area">
-                    <span>{p['t']}</span>
-                    <h4>{p['n']}</h4>
-                    <div class="price">{p['p']}</div>
+if not produtos_filtrados:
+    st.warning("Nenhum produto encontrado com esse nome.")
+else:
+    cols = st.columns(4)
+    for idx, p in enumerate(produtos_filtrados):
+        with cols[idx % 4]:
+            st.markdown(f"""
+                <div style="border:1px solid #EEE; border-radius:15px; padding:15px; background:white; margin-bottom:10px;">
+                    <div style="font-size:50px; text-align:center; background:#F9FAFB; border-radius:10px; padding:20px;">{p['i']}</div>
+                    <p style="color:#7C3AED; font-weight:700; font-size:0.7rem; margin-top:10px;">{p['t']}</p>
+                    <h4 style="margin:0; font-size:1rem;">{p['n']}</h4>
+                    <h3 style="margin:10px 0; color:#111827;">R$ {p['p']:.2f}</h3>
                 </div>
-            </div>
-        """, unsafe_allow_html=True)
-        st.button("ADICIONAR", key=f"btn_{idx}")
+            """, unsafe_allow_html=True)
+            st.button("ADICIONAR", key=f"v_{idx}")
 
 # --- RODAPÉ ---
-st.markdown(f"""
-    <div class="footer-clean">
-        <div class="footer-links">
-            <a href="#">Termos</a>
-            <a href="#">Privacidade</a>
-            <a href="https://wa.me/55119XXXXXXXX">Contato</a>
-            <a href="https://instagram.com/encantolilie_">Instagram</a>
+st.markdown("""
+    <div class="footer-v2">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h5>Canais Oficiais</h5>
+                <a href="https://wa.me/55119XXXXXXXX">WhatsApp</a>
+                <a href="https://instagram.com/encantolilie_">Instagram</a>
+                <a href="https://tr.ee/ZtbOcerQhG">Loja Shopee</a>
+            </div>
+            <div class="footer-col">
+                <h5>Atendimento</h5>
+                <a href="https://tr.ee/5D7-CjgLk5">Catálogo Digital</a>
+                <a href="#">Meus Pedidos</a>
+                <a href="#">Suporte</a>
+            </div>
+            <div class="footer-col">
+                <h5>Jurídico 2026</h5>
+                <a href="#">Termos de Uso (LGPD 2.0)</a>
+                <a href="#">Privacidade e Dados</a>
+                <a href="#">Trocas e Devoluções</a>
+            </div>
         </div>
-        <div class="copyright">
-            © 2026 Encanto Liliê | Osasco, SP | CNPJ: 00.000.000/0001-00
+        <div style="text-align:center; margin-top:40px; color:#9CA3AF; font-size:0.8rem;">
+            © 2026 Encanto Liliê - Criatividade que encanta. <br>
+            CNPJ 00.000.000/0001-00 | Osasco, São Paulo.
         </div>
     </div>
 """, unsafe_allow_html=True)
