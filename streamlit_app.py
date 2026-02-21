@@ -1,148 +1,184 @@
 import streamlit as st
 
-# 1. Configuração Inicial
+# 1. Configuração de Layout Estilo Loja Virtual
 st.set_page_config(
-    page_title="Encanto Liliê | Catálogo",
-    page_icon="✨",
+    page_title="Encanto Liliê | Vitrine Personalizada",
+    page_icon="🌸",
     layout="wide",
+    initial_sidebar_state="collapsed",
 )
 
-# 2. Injeção de CSS (Correção de Contraste e Botões)
+# 2. CSS Estilo "Vitrine do Artesanato" (Limpo, Profissional, Contraste Alto)
 st.markdown("""
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@700&display=swap');
         
-        .stApp { background-color: #FFFFFF; }
-        [data-testid="stHeader"] { visibility: hidden; }
-        .block-container { padding-top: 2rem !important; }
-
-        /* Tipografia Principal */
-        html, body, [class*="css"], p, span {
-            font-family: 'Outfit', sans-serif !important;
-            color: #1A1A1A !important; 
+        /* Fundo e Container */
+        .stApp { background-color: #F9FAFB; }
+        .block-container { padding: 0rem 1rem 2rem 1rem !important; max-width: 1200px; }
+        
+        /* Barra de Topo (Header) */
+        .header-loja {
+            background-color: #FFFFFF;
+            padding: 15px 0;
+            border-bottom: 2px solid #7C3AED;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        /* Banner Hero */
-        .hero-section {
-            background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
-            padding: 40px 20px;
-            border-radius: 24px;
-            text-align: center;
-            margin-bottom: 30px;
+        /* Tipografia de Contraste */
+        h1, h2, h3, p, span { font-family: 'Inter', sans-serif !important; color: #111827 !important; }
+        .price-tag { color: #EC4899 !important; font-weight: 800; font-size: 1.3rem; }
+
+        /* Banner Principal (Estilo Carrossel) */
+        .promo-banner {
+            background: linear-gradient(90deg, #7C3AED 0%, #A78BFA 100%);
             color: white !important;
+            padding: 40px;
+            border-radius: 16px;
+            text-align: left;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.2);
         }
-        .hero-section h1 { color: white !important; font-weight: 800; margin-bottom: 5px; }
-        .hero-section p { color: #FFFFFF !important; opacity: 0.9; }
+        .promo-banner h1 { color: white !important; font-family: 'Outfit', sans-serif !important; margin: 0; }
+        .promo-banner p { color: #F3E8FF !important; margin-top: 5px; font-weight: 500; }
 
-        /* Links Rápidos (Estilo Linktree) */
-        .link-bar {
-            background-color: #F3E8FF;
+        /* Grid de Categorias */
+        .cat-card {
+            background: white;
             padding: 15px;
-            border-radius: 15px;
+            border-radius: 12px;
             text-align: center;
-            margin-bottom: 10px;
-            border: 1px solid #DDD6FE;
+            border: 1px solid #E5E7EB;
+            font-weight: 600;
+            color: #4B5563;
+        }
+
+        /* Card de Produto (Baseado na Vitrine do Artesanato) */
+        .product-box {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #E5E7EB;
+            padding: 0;
+            overflow: hidden;
             transition: 0.3s;
-            cursor: pointer;
-            display: block;
-            text-decoration: none !important;
+            margin-bottom: 10px;
         }
-        .link-bar:hover { background-color: #EDE9FE; transform: translateY(-2px); }
-        .link-text { color: #7C3AED !important; font-weight: 700; font-size: 0.9rem; }
+        .product-box:hover { border-color: #7C3AED; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .img-placeholder {
+            background: #F3F4F6;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #D1D5DB;
+        }
+        .product-content { padding: 15px; }
+        .product-title { font-weight: 700; font-size: 0.95rem; height: 40px; overflow: hidden; }
 
-        /* Cards de Produto */
-        .product-card {
-            background: #FFFFFF;
-            border-radius: 20px;
-            border: 1px solid #F1F5F9;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-        }
-        .product-title {
-            color: #1A1A1A !important;
-            font-weight: 800 !important;
-            font-size: 1.2rem !important;
-            margin: 15px 0 5px 0 !important;
-            display: block;
-        }
-        .product-tag {
-            color: #7C3AED !important;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-        }
-
-        /* --- AJUSTE DEFINITIVO DOS BOTÕES --- */
+        /* Botão "Comprar" Robusto */
         div.stButton > button {
-            background-color: #7C3AED !important; /* Roxo Vibrante */
-            color: #FFFFFF !important;           /* Texto Branco Puro */
-            border-radius: 12px !important;
-            border: none !important;
+            background-color: #7C3AED !important;
+            color: white !important;
+            font-weight: 800 !important;
+            border-radius: 8px !important;
             width: 100% !important;
-            height: 55px !important;
-            font-size: 1.1rem !important;
-            font-weight: 800 !important;         /* Texto Extra Negrito */
-            text-transform: uppercase !important;
-            letter-spacing: 1px !important;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3) !important;
-            margin-top: 10px;
+            height: 48px !important;
+            border: none !important;
+            text-transform: uppercase;
+            font-size: 0.85rem !important;
         }
-        div.stButton > button:hover {
-            background-color: #EC4899 !important; /* Rosa ao passar o mouse */
+        div.stButton > button:hover { background-color: #6D28D9 !important; }
+
+        /* Rodapé Informativo */
+        .footer-loja {
+            background: #111827;
+            color: #9CA3AF !important;
+            padding: 40px 20px;
+            border-radius: 16px 16px 0 0;
+            margin-top: 50px;
+            text-align: center;
         }
     </style>
 """, unsafe_allow_html=True)
 
-# --- ESTRUTURA DO SITE ---
-
-# 1. Cabeçalho
+# --- HEADER & BUSCA ---
 st.markdown("""
-    <div class="hero-section">
-        <h1>Encanto Liliê</h1>
-        <p>Criatividade que encanta, resultados que marcam 🎯✨</p>
+    <div style='display: flex; align-items: center; justify-content: space-between; padding: 10px 0;'>
+        <h2 style='margin:0; color:#7C3AED !important; font-family:Outfit;'>Encanto Liliê</h2>
+        <div style='background:#F3F4F6; padding:8px 15px; border-radius:8px; width:50%; color:#9CA3AF;'>
+            <span class="material-symbols-rounded" style='vertical-align:middle; font-size:18px;'>search</span> Buscar itens personalizados...
+        </div>
     </div>
 """, unsafe_allow_html=True)
 
-# 2. Seção de Canais Oficiais (Baseado no Linktree)
-st.write("### 🔗 Nossos Canais")
-col_l1, col_l2 = st.columns(2)
+# --- BANNER PRINCIPAL ---
+st.markdown("""
+    <div class="promo-banner">
+        <p>LANÇAMENTO 2025</p>
+        <h1>Kits Escolares Personalizados</h1>
+        <p>Tudo o que seu pequeno precisa para brilhar na volta às aulas.</p>
+    </div>
+""", unsafe_allow_html=True)
 
-with col_l1:
-    st.markdown('<a href="https://tr.ee/ZtbOcerQhG" class="link-bar"><span class="link-text">🛍️ LOJA NA SHOPEE</span></a>', unsafe_allow_html=True)
-    st.markdown('<a href="https://tr.ee/5D7-CjgLk5" class="link-bar"><span class="link-text">📖 CATÁLOGO CRIATIVO</span></a>', unsafe_allow_html=True)
+# --- CANAIS (LINKTREE INTEGRADO) ---
+c1, c2, c3, c4 = st.columns(4)
+with c1: st.markdown('<div class="cat-card">🛍️ Shopee</div>', unsafe_allow_html=True)
+with c2: st.markdown('<div class="cat-card">📖 Catálogo</div>', unsafe_allow_html=True)
+with c3: st.markdown('<div class="cat-card">📸 Instagram</div>', unsafe_allow_html=True)
+with c4: st.markdown('<div class="cat-card">💬 WhatsApp</div>', unsafe_allow_html=True)
 
-with col_l2:
-    st.markdown('<a href="https://wa.me/55119XXXXXXXX" class="link-bar"><span class="link-text">💬 WHATSAPP DIRETO</span></a>', unsafe_allow_html=True)
-    st.markdown('<a href="https://instagram.com/encantolilie_" class="link-bar"><span class="link-text">📸 INSTAGRAM</span></a>', unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
-st.divider()
-
-# 3. Vitrine de Destaques (Inspirado no Instagram)
-st.write("### ✨ Destaques da Encanto")
+# --- VITRINE DE PRODUTOS ---
+st.write("### 💎 Sugestões para Você")
 
 produtos = [
-    {"n": "Kit Marmitinha", "t": "Aniversário", "icon": "🍱"},
-    {"n": "Kit Escolar Hulk", "t": "Escolar", "icon": "🎒"},
-    {"n": "Caneca Pet", "t": "Canecas", "icon": "☕"}
+    {"nome": "Kit Marmitinha Personalizada", "preco": "R$ 45,90", "tag": "Aniversário"},
+    {"nome": "Caneca Amor em 4 Patas", "preco": "R$ 39,90", "tag": "Presentes"},
+    {"nome": "Kit Escolar Hulk (Completo)", "preco": "R$ 89,90", "tag": "Volta às Aulas"},
+    {"nome": "Agenda 2025 Personalizada", "preco": "R$ 65,00", "tag": "Papelaria"}
 ]
 
-c1, c2, c3 = st.columns(3)
-for idx, p in enumerate(produtos):
-    with [c1, c2, c3][idx]:
+col1, col2, col3, col4 = st.columns(4)
+cols = [col1, col2, col3, col4]
+
+for i, p in enumerate(produtos):
+    with cols[i]:
         st.markdown(f"""
-            <div class="product-card">
-                <div style="background:#F8FAFC; padding:30px; border-radius:15px; font-size:60px;">{p['icon']}</div>
-                <div class="product-tag">{p['t']}</div>
-                <strong class="product-title">{p['n']}</strong>
+            <div class="product-box">
+                <div class="img-placeholder">
+                    <span class="material-symbols-rounded" style="font-size: 60px;">image</span>
+                </div>
+                <div class="product-content">
+                    <span style="font-size: 0.7rem; color: #7C3AED; font-weight: 700;">{p['tag']}</span>
+                    <div class="product-title">{p['nome']}</div>
+                    <div class="price-tag">{p['preco']}</div>
+                </div>
             </div>
         """, unsafe_allow_html=True)
-        st.button(f"Comprar {p['n']}", key=f"btn_{idx}")
+        st.button("ADICIONAR", key=f"prod_{i}")
 
-# 4. Rodapé
-st.markdown(f"""
-    <div style='text-align: center; margin-top: 50px; padding: 30px; border-top: 1px solid #EEE;'>
-        <p style='font-weight: 800; color: #7C3AED;'>📍 Osasco, São Paulo</p>
-        <p style='color: #666; font-size: 0.8rem;'>Enviamos para todo o Brasil 🇧🇷</p>
+# --- RODAPÉ ESTILO VITRINE DO ARTESANATO ---
+st.markdown("""
+    <div class="footer-loja">
+        <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
+            <div>
+                <span class="material-symbols-rounded" style="color:#7C3AED">local_shipping</span><br>
+                <b>Entrega Segura</b><br><small>Para todo Brasil</small>
+            </div>
+            <div>
+                <span class="material-symbols-rounded" style="color:#7C3AED">payments</span><br>
+                <b>Pagamento Facilitado</b><br><small>Pix ou Cartão</small>
+            </div>
+            <div>
+                <span class="material-symbols-rounded" style="color:#7C3AED">verified</span><br>
+                <b>Qualidade Encanto</b><br><small>100% artesanal</small>
+            </div>
+        </div>
+        <p style="margin-top:40px; font-size:0.7rem;">Encanto Liliê - Osasco/SP | CNPJ: 00.000.000/0001-00</p>
     </div>
 """, unsafe_allow_html=True)
