@@ -5,6 +5,7 @@ st.set_page_config(
     page_title="Encanto Liliê | Vitrine 2026",
     page_icon="🌸",
     layout="wide",
+    initial_sidebar_state="collapsed" # Inicia recolhido para não atrapalhar a visão
 )
 
 # 2. Inicialização do Carrinho no Session State
@@ -33,14 +34,21 @@ produtos = [
     {"n": "Agenda 2026", "p": 65.00, "t": "Papelaria", "i": "📅"}
 ]
 
-# 4. CSS (Interface, Carrinho e Animações)
+# 4. CSS Customizado
 st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;700;800&display=swap');
         
         .stApp { background-color: #FFFFFF; font-family: 'Inter', sans-serif; }
-        [data-testid="stHeader"] { visibility: hidden; }
-
+        
+        /* Ajuste para o Sidebar ficar na DIREITA */
+        [data-testid="stSidebar"] {
+            left: auto !important;
+            right: 0 !important;
+            width: 350px !important;
+        }
+        [data-testid="stSidebarNav"] { display: none; }
+        
         .loja-titulo {
             text-align: center;
             font-family: 'Dancing Script', cursive;
@@ -67,7 +75,7 @@ st.markdown("""
             100% { transform: translateX(0); }
         }
 
-        /* Botão Adicionar */
+        /* Botões */
         div.stButton > button {
             background-color: #7C3AED !important; color: white !important;
             border-radius: 12px !important; border: none !important;
@@ -76,9 +84,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- CARRINHO NO CANTO SUPERIOR ESQUERDO (SIDEBAR) ---
+# --- CARRINHO NO CANTO DIREITO (SIDEBAR) ---
 with st.sidebar:
-    st.markdown("## 🛒 Meu Carrinho")
+    st.markdown("## 🛒 Meu Pedido")
+    st.info("O carrinho agora fica aqui na direita! Você pode recolher na seta acima.")
+    
     if not st.session_state.carrinho:
         st.write("Seu carrinho está vazio.")
     else:
@@ -90,12 +100,33 @@ with st.sidebar:
         st.divider()
         st.markdown(f"### Total: R$ {total:.2f}")
         
-        if st.button("Finalizar Pedido via WhatsApp"):
-            itens_lista = "\\n".join([f"- {i['nome']} (R$ {i['preco']:.2f})" for i in st.session_state.carrinho])
-            msg = f"Olá Encanto Liliê! Gostaria de encomendar:\\n{itens_lista}\\nTotal: R$ {total:.2f}"
-            st.markdown(f'<a href="https://wa.me/55119XXXXXXXX?text={msg}" target="_blank">Clique aqui para enviar</a>', unsafe_allow_html=True)
+        # Formulário de Informações do Cliente
+        st.markdown("### Seus Dados")
+        nome_cliente = st.text_input("Nome Completo")
+        email_cliente = st.text_input("E-mail")
+        tel_cliente = st.text_input("Telefone de Contato")
         
-        if st.button("Limpar Carrinho"):
+        if st.button("Finalizar e Enviar WhatsApp"):
+            if nome_cliente and email_cliente and tel_cliente:
+                itens_lista = "%0A".join([f"- {i['nome']} (R$ {i['preco']:.2f})" for i in st.session_state.carrinho])
+                
+                # Montando a mensagem para URL
+                texto_whatsapp = (
+                    f"Olá! Novo pedido de: *{nome_cliente}*%0A"
+                    f"E-mail: {email_cliente}%0A"
+                    f"Telefone: {tel_cliente}%0A%0A"
+                    f"*ITENS:*%0A{itens_lista}%0A%0A"
+                    f"*TOTAL: R$ {total:.2f}*"
+                )
+                
+                # Link com o seu número para teste
+                link_wa = f"https://wa.me/5511977253425?text={texto_whatsapp}"
+                
+                st.markdown(f'<a href="{link_wa}" target="_blank" style="text-decoration:none;"><div style="background-color:#25D366; color:white; padding:10px; border-radius:10px; text-align:center; font-weight:bold;">ABRIR WHATSAPP AGORA</div></a>', unsafe_allow_html=True)
+            else:
+                st.error("Por favor, preencha todos os campos para finalizar.")
+        
+        if st.button("Limpar Tudo"):
             limpar_carrinho()
             st.rerun()
 
@@ -137,23 +168,5 @@ else:
                     <h3 style="margin:10px 0;">R$ {p['p']:.2f}</h3>
                 </div>
             """, unsafe_allow_html=True)
-            # O botão agora chama a função de adicionar
             if st.button("ADICIONAR", key=f"btn_{idx}"):
                 adicionar_ao_carrinho(p['n'], p['p'])
-
-# --- RODAPÉ ---
-st.markdown("""
-    <hr style="margin-top: 60px;">
-    <div style="display: flex; justify-content: center; gap: 80px; padding: 20px 0;">
-        <div style="display: flex; flex-direction: column; align-items: flex-start;">
-            <h5 style="margin-bottom:15px; color:#111827; font-weight:800;">CONTATO</h5>
-            <a href="https://wa.me/55119XXXXXXXX" target="_blank" style="text-decoration:none; color:#666; margin-bottom:8px;">💬 WhatsApp</a>
-            <a href="https://instagram.com/encantolilie_" target="_blank" style="text-decoration:none; color:#666; margin-bottom:8px;">📸 Instagram</a>
-        </div>
-        <div style="display: flex; flex-direction: column; align-items: flex-start;">
-            <h5 style="margin-bottom:15px; color:#111827; font-weight:800;">LEGAL</h5>
-            <a href="#" style="text-decoration:none; color:#666; margin-bottom:8px;">📄 Termos de Uso</a>
-            <a href="#" style="text-decoration:none; color:#666; margin-bottom:8px;">🔒 Privacidade</a>
-        </div>
-    </div>
-""", unsafe_allow_html=True)
