@@ -150,7 +150,7 @@ st.markdown("""
         <div style="display: flex; flex-direction: column; align-items: flex-start;">
             <h5 style="margin-bottom:15px; color:#111827; font-weight:800;">LEGAL</h5>
             <a href="#" style="text-decoration:none; color:#666; margin-bottom:8px; font-size:0.95rem;">📄 Termos de Uso (LGPD 2026)</a>
-            <a href="#" style="text-decoration:none; color:#666; margin-bottom:8px; font-size:0.95rem;">🔒 Privacidade e Dados</a>
+            <a href="#" style="text-decoration:none; color:#666; margin-bottom:8px; font-size:0.95rem;"> 🔒 Privacidade e Dados</a>
         </div>
     </div>
     <div style="text-align:center; padding:20px; color:#AAA; font-size:0.8rem;">
