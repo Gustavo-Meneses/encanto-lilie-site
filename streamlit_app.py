@@ -21,7 +21,7 @@ def remover_do_carrinho(index):
     st.toast(f"❌ {item_removido['nome']} removido.", icon="🗑️")
     st.rerun()
 
-# 3. CSS Customizado (Correção de Layout e Botões)
+# 3. CSS Customizado
 st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;600;800&display=swap');
@@ -37,10 +37,10 @@ st.markdown("""
             font-weight: 800;
         }
 
-        /* Ajuste do Carrossel para não quebrar */
+        /* CARROSSEL AJUSTADO */
         .slider {
-            width: 100%; height: 250px; position: relative; overflow: hidden;
-            border-radius: 20px; margin-bottom: 30px;
+            width: 100%; height: 220px; position: relative; overflow: hidden;
+            border-radius: 20px; margin: 20px 0;
         }
         .slides { display: flex; width: 300%; height: 100%; animation: slide 12s infinite; }
         .slide { 
@@ -55,13 +55,12 @@ st.markdown("""
             100% { transform: translateX(0); }
         }
 
-        /* Estilização das Abas */
+        /* ABAS */
         .stTabs [data-baseweb="tab-list"] { gap: 10px; justify-content: center; }
         .stTabs [data-baseweb="tab"] {
             background-color: #F3F4F6 !important;
             border-radius: 10px !important;
-            padding: 10px 20px !important;
-            color: #4B5563 !important;
+            padding: 8px 16px !important;
         }
         .stTabs [aria-selected="true"] {
             background-color: #7C3AED !important;
@@ -96,22 +95,22 @@ with st.expander(f"🛒 MEU CARRINHO ({len(st.session_state.carrinho)})", expand
             with col_item:
                 st.markdown(f"<p style='color:black; margin-top:10px;'>● <b>{item['nome']}</b> - R$ {item['preco']:.2f}</p>", unsafe_allow_html=True)
             with col_btn:
-                if st.button("🗑️", key=f"del_cart_{idx}"):
+                if st.button("🗑️", key=f"cart_del_{idx}"):
                     remover_do_carrinho(idx)
         
         st.markdown(f"<h3 style='color:black;'>Total: R$ {total:.2f}</h3>", unsafe_allow_html=True)
         nome = st.text_input("Seu Nome Completo", key="nome_cli")
         tel = st.text_input("Seu WhatsApp (com DDD)", key="tel_cli")
         
-        col_final1, col_final2 = st.columns(2)
-        with col_final1:
-            if st.button("FINALIZAR PEDIDO", key="btn_checkout"):
+        c1, c2 = st.columns(2)
+        with c1:
+            if st.button("FINALIZAR PEDIDO", key="checkout_main"):
                 if nome and tel:
                     itens_txt = "%0A".join([f"- {i['nome']} (R$ {i['preco']:.2f})" for i in st.session_state.carrinho])
                     msg = f"Olá! Novo pedido de: *{nome}*%0A%0A*ITENS:*%0A{itens_txt}%0A%0ATotal: R$ {total:.2f}"
                     st.markdown(f' <a href="https://wa.me/5511977253425?text={msg}" target="_blank" style="text-decoration:none;"><div style="background-color:#25D366; color:white; padding:15px; border-radius:12px; text-align:center; font-weight:bold;">ABRIR WHATSAPP</div></a>', unsafe_allow_html=True)
-        with col_final2:
-            if st.button("Limpar Carrinho", key="btn_clear"):
+        with c2:
+            if st.button("Limpar Carrinho", key="clear_all"):
                 st.session_state.carrinho = []
                 st.rerun()
 
@@ -126,7 +125,7 @@ st.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 
-# --- BANCO DE DADOS E CATEGORIAS ---
+# --- PRODUTOS E ABAS ---
 produtos = [
     {"n": "Kit Marmitinha", "p": 45.90, "i": "🍱", "c": "Escolar"},
     {"n": "Kit Escolar Hulk", "p": 89.00, "i": "🎒", "c": "Escolar"},
@@ -136,40 +135,46 @@ produtos = [
     {"n": "Planner Mensal", "p": 42.00, "i": "🗒️", "c": "Agendas"}
 ]
 
-def renderizar_produtos(lista, sufixo_aba):
+def exibir_vitrine(lista, aba_id):
     filtrados = [p for p in lista if busca.lower() in p['n'].lower()]
     if not filtrados:
-        st.info("Nenhum produto encontrado.")
+        st.info("Nenhum item encontrado.")
         return
-        
     cols = st.columns(2)
     for idx, p in enumerate(filtrados):
         with cols[idx % 2]:
             st.markdown(f"""
-                <div style="border: 1px solid #EEE; border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 10px; min-height: 180px;">
+                <div style="border: 1px solid #EEE; border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 10px;">
                     <div style="font-size:40px;">{p['i']}</div>
-                    <h4 style="color:black; margin:5px 0; font-size: 1rem;">{p['n']}</h4>
+                    <h4 style="color:black; margin:5px 0;">{p['n']}</h4>
                     <p style="font-weight:800; font-size:1.1rem; color:black;">R$ {p['p']:.2f}</p>
                 </div>
             """, unsafe_allow_html=True)
-            # A KEY AGORA É ÚNICA POR ABA E POR PRODUTO
-            if st.button("ADICIONAR", key=f"btn_{sufixo_aba}_{idx}_{p['n']}"):
+            if st.button("ADICIONAR", key=f"add_{aba_id}_{idx}"):
                 adicionar_ao_carrinho(p['n'], p['p'])
 
-tab_todos, tab_escolar, tab_canecas, tab_agendas = st.tabs(["✨ Todos", "🎒 Escolar", "☕ Canecas", "📅 Agendas"])
+t1, t2, t3, t4 = st.tabs(["✨ Todos", "🎒 Escolar", "☕ Canecas", "📅 Agendas"])
+with t1: exibir_vitrine(produtos, "all")
+with t2: exibir_vitrine([p for p in produtos if p['c'] == "Escolar"], "esc")
+with t3: exibir_vitrine([p for p in produtos if p['c'] == "Canecas"], "can")
+with t4: exibir_vitrine([p for p in produtos if p['c'] == "Agendas"], "age")
 
-with tab_todos:
-    renderizar_produtos(produtos, "todos")
-
-with tab_escolar:
-    renderizar_produtos([p for p in produtos if p['c'] == "Escolar"], "esc")
-
-with tab_canecas:
-    renderizar_produtos([p for p in produtos if p['c'] == "Canecas"], "can")
-
-with tab_agendas:
-    renderizar_produtos([p for p in produtos if p['c'] == "Agendas"], "age")
-
-# --- RODAPÉ ---
-st.markdown("<hr style='margin-top: 50px; border: 0.5px solid #EEE;'>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; color:#888; font-size: 0.8rem;'>© 2026 Encanto Liliê | Osasco, SP</p>", unsafe_allow_html=True)
+# --- RODAPÉ PREMIUM RESTAURADO ---
+st.markdown("""
+    <hr style="margin-top: 50px; border: 0.5px solid #EEE;">
+    <div style="display: flex; justify-content: space-around; flex-wrap: wrap; padding: 30px 10px; background-color: #F9FAFB; border-radius: 24px; gap: 30px;">
+        <div style="min-width: 200px; text-align: left;">
+            <h4 style="color:#000; font-weight:800; margin-bottom:20px;">CONTATO</h4>
+            <p style="margin-bottom:10px;"><a href="https://wa.me/5511977253425" style="color:#7C3AED; text-decoration:none; font-weight:600;">💬 WhatsApp</a></p>
+            <p style="margin-bottom:10px;"><a href="https://instagram.com/encantolilie_" style="color:#7C3AED; text-decoration:none; font-weight:600;">📸 Instagram</a></p>
+        </div>
+        <div style="min-width: 200px; text-align: left;">
+            <h4 style="color:#000; font-weight:800; margin-bottom:20px;">LEGAL</h4>
+            <p style="margin-bottom:10px; color:#444;">📄 Termos de Uso (LGPD 2026)</p>
+            <p style="margin-bottom:10px; color:#444;">🔒 Privacidade</p>
+        </div>
+    </div>
+    <div style="text-align:center; padding:20px; color:#888; font-size:0.85rem;">
+        © 2026 Encanto Liliê | Osasco, SP | CNPJ: 00.000.000/0001-00
+    </div>
+""", unsafe_allow_html=True)
