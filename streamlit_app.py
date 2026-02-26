@@ -14,9 +14,15 @@ if 'carrinho' not in st.session_state:
 def adicionar_ao_carrinho(nome, preco):
     st.session_state.carrinho.append({"nome": nome, "preco": preco})
     st.toast(f"✅ {nome} adicionado!", icon="🛒")
-    st.rerun() 
+    st.rerun()
 
-# 3. CSS Ajustado (Foco em Contraste e Mobile Clean)
+def remover_do_carrinho(index):
+    # Remove o item específico pelo índice da lista
+    item_removido = st.session_state.carrinho.pop(index)
+    st.toast(f"❌ {item_removido['nome']} removido.", icon="🗑️")
+    st.rerun()
+
+# 3. CSS Customizado
 st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;600;800&display=swap');
@@ -32,7 +38,6 @@ st.markdown("""
             font-weight: 800;
         }
 
-        /* CAMPOS DE TEXTO - VISUAL CLEAN E LEGÍVEL */
         input {
             background-color: #FFFFFF !important;
             color: #000000 !important;
@@ -41,11 +46,15 @@ st.markdown("""
         div[data-baseweb="input"] {
             background-color: #FFFFFF !important;
             border-radius: 10px !important;
-            border: 1px solid #D1D5DB !important;
         }
-        label p {
-            color: #000000 !important;
-            font-weight: 600 !important;
+
+        /* Estilo do Carrinho */
+        .item-carrinho {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+            border-bottom: 1px dashed #EEE;
         }
 
         /* CARROSSEL */
@@ -66,12 +75,12 @@ st.markdown("""
             100% { transform: translateX(0); }
         }
 
-        /* BOTÕES */
         div.stButton > button {
             background-color: #7C3AED !important;
             color: #FFFFFF !important;
             font-weight: 700 !important;
             border-radius: 12px !important;
+            width: 100%;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -89,25 +98,34 @@ with st.expander(f"🛒 MEU CARRINHO ({len(st.session_state.carrinho)})", expand
         st.markdown("<p style='color:black;'>Seu carrinho está vazio.</p>", unsafe_allow_html=True)
     else:
         total = sum(item['preco'] for item in st.session_state.carrinho)
-        for item in st.session_state.carrinho:
-            st.markdown(f"<p style='color:black;'>● <b>{item['nome']}</b> - R$ {item['preco']:.2f}</p>", unsafe_allow_html=True)
+        
+        # Listagem de itens com opção de remover
+        for idx, item in enumerate(st.session_state.carrinho):
+            col_item, col_btn = st.columns([4, 1])
+            with col_item:
+                st.markdown(f"<p style='color:black; margin-top:10px;'>● <b>{item['nome']}</b> - R$ {item['preco']:.2f}</p>", unsafe_allow_html=True)
+            with col_btn:
+                if st.button("🗑️", key=f"del_{idx}"):
+                    remover_do_carrinho(idx)
         
         st.markdown(f"<h3 style='color:black;'>Total: R$ {total:.2f}</h3>", unsafe_allow_html=True)
         
         nome = st.text_input("Seu Nome Completo", key="nome_cli")
         tel = st.text_input("Seu WhatsApp (com DDD)", key="tel_cli")
         
-        if st.button("FINALIZAR E ENVIAR PEDIDO"):
-            if nome and tel:
-                itens_txt = "%0A".join([f"- {i['nome']} (R$ {i['preco']:.2f})" for i in st.session_state.carrinho])
-                msg = f"Olá! Novo pedido de: *{nome}*%0A%0A*ITENS:*%0A{itens_txt}%0A%0ATotal: R$ {total:.2f}"
-                st.markdown(f' <a href="https://wa.me/5511977253425?text={msg}" target="_blank" style="text-decoration:none;"><div style="background-color:#25D366; color:white; padding:15px; border-radius:12px; text-align:center; font-weight:bold;">ABRIR WHATSAPP</div></a>', unsafe_allow_html=True)
-            else:
-                st.warning("Preencha os dados acima.")
-        
-        if st.button("Limpar Carrinho"):
-            st.session_state.carrinho = []
-            st.rerun()
+        col_final1, col_final2 = st.columns(2)
+        with col_final1:
+            if st.button("FINALIZAR PEDIDO"):
+                if nome and tel:
+                    itens_txt = "%0A".join([f"- {i['nome']} (R$ {i['preco']:.2f})" for i in st.session_state.carrinho])
+                    msg = f"Olá! Novo pedido de: *{nome}*%0A%0A*ITENS:*%0A{itens_txt}%0A%0ATotal: R$ {total:.2f}"
+                    st.markdown(f' <a href="https://wa.me/5511977253425?text={msg}" target="_blank" style="text-decoration:none;"><div style="background-color:#25D366; color:white; padding:15px; border-radius:12px; text-align:center; font-weight:bold;">ABRIR WHATSAPP</div></a>', unsafe_allow_html=True)
+                else:
+                    st.warning("Preencha nome e telefone.")
+        with col_final2:
+            if st.button("Limpar Carrinho"):
+                st.session_state.carrinho = []
+                st.rerun()
 
 # --- CARROSSEL ---
 st.markdown(f"""
@@ -142,7 +160,7 @@ for idx, p in enumerate(prod_filtrados):
         if st.button("ADICIONAR", key=f"btn_{idx}"):
             adicionar_ao_carrinho(p['n'], p['p'])
 
-# --- RODAPÉ PREMIUM RESTAURADO ---
+# --- RODAPÉ ---
 st.markdown("""
     <hr style="margin-top: 50px; border: 0.5px solid #EEE;">
     <div style="display: flex; justify-content: space-around; flex-wrap: wrap; padding: 30px 10px; background-color: #F9FAFB; border-radius: 24px; gap: 30px;">
@@ -150,7 +168,6 @@ st.markdown("""
             <h4 style="color:#000; font-weight:800; margin-bottom:20px;">CONTATO</h4>
             <p style="margin-bottom:10px;"><a href="https://wa.me/5511977253425" style="color:#7C3AED; text-decoration:none; font-weight:600;">💬 WhatsApp</a></p>
             <p style="margin-bottom:10px;"><a href="https://instagram.com/encantolilie_" style="color:#7C3AED; text-decoration:none; font-weight:600;">📸 Instagram</a></p>
-            <p style="margin-bottom:10px;"><a href="#" style="color:#7C3AED; text-decoration:none; font-weight:600;">🛍️ Shopee</a></p>
         </div>
         <div style="min-width: 200px; text-align: left;">
             <h4 style="color:#000; font-weight:800; margin-bottom:20px;">LEGAL</h4>
@@ -159,7 +176,6 @@ st.markdown("""
         </div>
     </div>
     <div style="text-align:center; padding:20px; color:#888; font-size:0.85rem;">
-        © 2026 Encanto Liliê | Osasco, SP | CNPJ: 00.000.000/0001-00
+        © 2026 Encanto Liliê | Osasco, SP
     </div>
-    <div style="height: 40px;"></div>
 """, unsafe_allow_html=True)
