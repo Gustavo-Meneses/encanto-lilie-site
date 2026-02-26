@@ -21,7 +21,7 @@ def remover_do_carrinho(index):
     st.toast(f"❌ {item_removido['nome']} removido.", icon="🗑️")
     st.rerun()
 
-# 3. CSS Customizado
+# 3. CSS Customizado (Correção de Layout e Botões)
 st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;600;800&display=swap');
@@ -37,14 +37,29 @@ st.markdown("""
             font-weight: 800;
         }
 
-        /* Estilização das Abas (Tabs) */
-        .stTabs [data-baseweb="tab-list"] {
-            gap: 10px;
-            justify-content: center;
+        /* Ajuste do Carrossel para não quebrar */
+        .slider {
+            width: 100%; height: 250px; position: relative; overflow: hidden;
+            border-radius: 20px; margin-bottom: 30px;
         }
+        .slides { display: flex; width: 300%; height: 100%; animation: slide 12s infinite; }
+        .slide { 
+            width: 33.33%; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; color: white; 
+            text-align: center; padding: 20px;
+        }
+        @keyframes slide {
+            0%, 30% { transform: translateX(0); }
+            33%, 63% { transform: translateX(-33.33%); }
+            66%, 96% { transform: translateX(-66.66%); }
+            100% { transform: translateX(0); }
+        }
+
+        /* Estilização das Abas */
+        .stTabs [data-baseweb="tab-list"] { gap: 10px; justify-content: center; }
         .stTabs [data-baseweb="tab"] {
             background-color: #F3F4F6 !important;
-            border-radius: 10px 10px 0 0 !important;
+            border-radius: 10px !important;
             padding: 10px 20px !important;
             color: #4B5563 !important;
         }
@@ -81,7 +96,7 @@ with st.expander(f"🛒 MEU CARRINHO ({len(st.session_state.carrinho)})", expand
             with col_item:
                 st.markdown(f"<p style='color:black; margin-top:10px;'>● <b>{item['nome']}</b> - R$ {item['preco']:.2f}</p>", unsafe_allow_html=True)
             with col_btn:
-                if st.button("🗑️", key=f"del_{idx}"):
+                if st.button("🗑️", key=f"del_cart_{idx}"):
                     remover_do_carrinho(idx)
         
         st.markdown(f"<h3 style='color:black;'>Total: R$ {total:.2f}</h3>", unsafe_allow_html=True)
@@ -90,13 +105,13 @@ with st.expander(f"🛒 MEU CARRINHO ({len(st.session_state.carrinho)})", expand
         
         col_final1, col_final2 = st.columns(2)
         with col_final1:
-            if st.button("FINALIZAR PEDIDO"):
+            if st.button("FINALIZAR PEDIDO", key="btn_checkout"):
                 if nome and tel:
                     itens_txt = "%0A".join([f"- {i['nome']} (R$ {i['preco']:.2f})" for i in st.session_state.carrinho])
                     msg = f"Olá! Novo pedido de: *{nome}*%0A%0A*ITENS:*%0A{itens_txt}%0A%0ATotal: R$ {total:.2f}"
                     st.markdown(f' <a href="https://wa.me/5511977253425?text={msg}" target="_blank" style="text-decoration:none;"><div style="background-color:#25D366; color:white; padding:15px; border-radius:12px; text-align:center; font-weight:bold;">ABRIR WHATSAPP</div></a>', unsafe_allow_html=True)
         with col_final2:
-            if st.button("Limpar Carrinho"):
+            if st.button("Limpar Carrinho", key="btn_clear"):
                 st.session_state.carrinho = []
                 st.rerun()
 
@@ -111,10 +126,7 @@ st.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 
-# --- CATEGORIAS ---
-tab_todos, tab_escolar, tab_canecas, tab_agendas = st.tabs(["✨ Todos", "🎒 Escolar", "☕ Canecas", "📅 Agendas"])
-
-# --- BANCO DE DADOS DE PRODUTOS ---
+# --- BANCO DE DADOS E CATEGORIAS ---
 produtos = [
     {"n": "Kit Marmitinha", "p": 45.90, "i": "🍱", "c": "Escolar"},
     {"n": "Kit Escolar Hulk", "p": 89.00, "i": "🎒", "c": "Escolar"},
@@ -124,41 +136,40 @@ produtos = [
     {"n": "Planner Mensal", "p": 42.00, "i": "🗒️", "c": "Agendas"}
 ]
 
-def renderizar_produtos(lista):
-    # Filtra também pela busca por texto
+def renderizar_produtos(lista, sufixo_aba):
     filtrados = [p for p in lista if busca.lower() in p['n'].lower()]
     if not filtrados:
-        st.info("Nenhum produto encontrado nesta categoria.")
+        st.info("Nenhum produto encontrado.")
         return
         
     cols = st.columns(2)
     for idx, p in enumerate(filtrados):
         with cols[idx % 2]:
             st.markdown(f"""
-                <div style="border: 1px solid #EEE; border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 10px;">
+                <div style="border: 1px solid #EEE; border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 10px; min-height: 180px;">
                     <div style="font-size:40px;">{p['i']}</div>
-                    <h4 style="color:black; margin:5px 0;">{p['n']}</h4>
-                    <p style="font-weight:800; font-size:1.2rem; color:black;">R$ {p['p']:.2f}</p>
+                    <h4 style="color:black; margin:5px 0; font-size: 1rem;">{p['n']}</h4>
+                    <p style="font-weight:800; font-size:1.1rem; color:black;">R$ {p['p']:.2f}</p>
                 </div>
             """, unsafe_allow_html=True)
-            if st.button("ADICIONAR", key=f"btn_{p['n']}_{idx}"):
+            # A KEY AGORA É ÚNICA POR ABA E POR PRODUTO
+            if st.button("ADICIONAR", key=f"btn_{sufixo_aba}_{idx}_{p['n']}"):
                 adicionar_ao_carrinho(p['n'], p['p'])
 
+tab_todos, tab_escolar, tab_canecas, tab_agendas = st.tabs(["✨ Todos", "🎒 Escolar", "☕ Canecas", "📅 Agendas"])
+
 with tab_todos:
-    renderizar_produtos(produtos)
+    renderizar_produtos(produtos, "todos")
 
 with tab_escolar:
-    escolar = [p for p in produtos if p['c'] == "Escolar"]
-    renderizar_produtos(escolar)
+    renderizar_produtos([p for p in produtos if p['c'] == "Escolar"], "esc")
 
 with tab_canecas:
-    canecas = [p for p in produtos if p['c'] == "Canecas"]
-    renderizar_produtos(canecas)
+    renderizar_produtos([p for p in produtos if p['c'] == "Canecas"], "can")
 
 with tab_agendas:
-    agendas = [p for p in produtos if p['c'] == "Agendas"]
-    renderizar_produtos(agendas)
+    renderizar_produtos([p for p in produtos if p['c'] == "Agendas"], "age")
 
 # --- RODAPÉ ---
 st.markdown("<hr style='margin-top: 50px; border: 0.5px solid #EEE;'>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; color:#888;'>© 2026 Encanto Liliê | Osasco, SP</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; color:#888; font-size: 0.8rem;'>© 2026 Encanto Liliê | Osasco, SP</p>", unsafe_allow_html=True)
