@@ -1,7 +1,7 @@
 import streamlit as st
 import urllib.parse
 
-# 1. Configuração da Página
+# 1. Configuração da Página (DEVE SER A PRIMEIRA LINHA DO STREAMLIT)
 st.set_page_config(
     page_title="Encanto Liliê | Criatividade que Encanta",
     page_icon="🌸",
@@ -15,7 +15,6 @@ st.markdown("""
         
         .stApp { background-color: #FFFFFF; font-family: 'Inter', sans-serif; }
         
-        /* Título Principal */
         .loja-titulo {
             text-align: center;
             font-family: 'Dancing Script', cursive;
@@ -25,7 +24,6 @@ st.markdown("""
             font-weight: 800;
         }
 
-        /* Estilização das Abas (Menu de Navegação) */
         .stTabs [data-baseweb="tab-list"] {
             justify-content: center;
             gap: 10px;
@@ -40,7 +38,6 @@ st.markdown("""
             color: #7C3AED !important;
         }
 
-        /* Card de Produto */
         .card-produto {
             border: 1px solid #E5E7EB;
             border-radius: 16px;
@@ -57,7 +54,6 @@ st.markdown("""
         }
         .desc-produto { color: #4B5563; font-size: 0.9rem; margin-bottom: 15px; min-height: 40px; }
         
-        /* Botão WhatsApp Direto */
         a.btn-wpp {
             display: block; width: 100%; background-color: #25D366; color: white !important;
             text-align: center; padding: 12px; border-radius: 8px; font-weight: bold;
@@ -67,9 +63,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Função para renderizar os produtos padronizados
+# 3. Função do Produto
 def exibir_produto(nome, descricao, preco, icone_temp="📦"):
-    # Prepara a mensagem exata para o WhatsApp
     numero_wpp = "5511953766456"
     texto_msg = f"Olá, Encanto Liliê! Tenho interesse no produto: *{nome}* (R$ {preco}). Como podemos personalizar?"
     link_wpp = f"https://wa.me/{numero_wpp}?text={urllib.parse.quote(texto_msg)}"
@@ -90,36 +85,4 @@ st.markdown("<p style='text-align:center; color:#666; font-weight:600;'>Criativi
 st.divider()
 
 # --- NAVEGAÇÃO POR ABAS ---
-aba_home, aba_pf, aba_corp, aba_sazonal, aba_sobre, aba_contato = st.tabs([
-    "🏠 Início", 
-    "🛍️ Produtos (PF)", 
-    "💼 Corporativo", 
-    "🎄 Sazonais", 
-    "📖 Sobre a Marca", 
-    "📞 Contato"
-])
-
-# --- CONTEÚDO: INÍCIO ---
-with aba_home:
-    st.markdown("<h2 style='text-align:center; color:#000;'>Bem-vindo ao Espaço Criativo</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; color:#444;'>Transformamos suas ideias reais em peças úteis e afetivas.</p>", unsafe_allow_html=True)
-    
-    # Banner Destaque
-    st.markdown("""
-        <div style="background: linear-gradient(135deg, #7C3AED, #EC4899); border-radius: 20px; padding: 40px 20px; text-align: center; color: white; margin-top: 20px;">
-            <h2>Personalização Feita com Afeto</h2>
-            <p>De lembranças individuais a brindes corporativos marcantes.</p>
-        </div>
-    """, unsafe_allow_html=True)
-
-# --- CONTEÚDO: PRODUTOS PF ---
-with aba_pf:
-    st.markdown("### Para Presentear e Encantar")
-    st.write("Conheça nossos catálogos voltados para o cliente final.")
-    
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        exibir_produto("Caneca Personalizada", "325ml, cerâmica branca. Artes prontas ou do zero.", "35,00", "☕")
-    with col2:
-        exibir_produto("Buquê de Bombom", "7 bombons com tag personalizada. Pronto para presentear com afeto.", "45,00", "🍫")
-    with
+aba_home, aba_pf, aba_corp, aba_sazonal, aba_sobre, aba
